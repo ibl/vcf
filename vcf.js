@@ -21,14 +21,15 @@ this.buildUI=function(id){
 }
 
 if(!!txt){
-	this.txt=txt;
+	this.var=VCF.parse(txt);
 } else {
-	this.txt="";
+	this.var=undefined;
 }
 	 
 }
 
-VCF.index={vcfs:[],fileName:[]}; // store parsed vcfs here
+VCF.dir={vcfs:[],fileName:[]}; // store parsed vcfs here
+
 VCF.buildUI=function(id){
 	
 	id = id || jmat.uid('VCF');
@@ -48,12 +49,12 @@ VCF.buildUI=function(id){
 		for(var i=0;i<evt.target.files.length;i++){
 			var reader = new FileReader();
 			var fname = evt.target.files[i].name;
-			VCF.index.fileName.push(fname);
+			VCF.dir.fileName.push(fname);
 			console.log('started parsing '+fname+' ...');
         	reader.onload=function(x){
 				var txt=x.target.result;
 				//console.log(txt);
-    	    	VCF.index.vcfs.push(new VCF(txt));
+    	    	VCF.dir.vcfs.push(new VCF(txt));
 				console.log('... done parsing '+fname);
 	    	}
 	    reader["readAsText"](evt.target.files[i]);			
@@ -73,11 +74,11 @@ VCF.buildUI=function(id){
 	drpBox.addEventListener("DbxChooserSuccess",function(evt){
 		for(var i=0;i<evt.files.length;i++){
 			var fname=evt.files[i].name;
-			VCF.index.fileName.push(fname);
+			VCF.dir.fileName.push(fname);
 			console.log('started parsing '+fname+' ...');
 			jQuery.get(evt.files[i].link,function(txt){
 				//console.log(txt);
-				VCF.index.vcfs.push(new VCF(txt));
+				VCF.dir.vcfs.push(new VCF(txt));
 				console.log('... done parsing '+fname);
 			})
 		}
@@ -96,5 +97,35 @@ VCF.buildUI=function(id){
 }
 
 VCF.parse=function(x){
-	console.log(x);
+	console.log('(parsing a '+x.length+' long string)');
+	x=x.split(/\n/);
+	var n=x.length; // number of lines in the file
+	if(x[n-1].length==0){n=n-1}; // remove trailing blank
+	y={head:{},body:{}};
+	// parse ## head lines
+	var i=0; // ith line
+	var L = x[i].match(/^##(.*)/); // L is the line being parsed
+	
+	while(L.length>1){
+		i++;
+		L = L[1].match(/([^=]+)\=(.*)/);
+		if(!y.head[L[1]]){y.head[L[1]]=[]}
+		y.head[L[1]].push(L[2]);
+		L = x[i].match(/^##(.*)/);
+		if(L==null){L=[]}; // break	
+	}
+	// parse # body lines
+	L=x[i].match(/^#([^#].*)/)[1]; // use fuirst line to define fields
+	var F = L.split(/\t/); // fields
+	for(var j=0;j<F.length;j++){
+		y.body[F[j]]=[];
+	}
+	for(var i=i+1;i<n;i++){
+		L = x[i].split(/\t/);
+		for(var j=0;j<F.length;j++){
+			y.body[F[j]][i]=L[j];
+		}	
+	}
+	y.fields=F;
+	return y;
 }
