@@ -21,9 +21,9 @@ this.buildUI=function(id){
 }
 
 if(!!txt){
-	this.var=VCF.parse(txt);
+	this.data=VCF.parse(txt);
 } else {
-	this.var=undefined;
+	this.data=undefined;
 }
 	 
 }
@@ -46,17 +46,21 @@ VCF.buildUI=function(id){
 	ipf.setAttribute('multiple');
 	ipf.onchange=function(evt){
 		//var f=evt.target.files[0];
+		var i0=VCF.dir.fileName.length; // number of vcfs registered already
 		for(var i=0;i<evt.target.files.length;i++){
 			var reader = new FileReader();
+			reader.i=i0+i;
 			var fname = evt.target.files[i].name;
-			VCF.dir.fileName.push(fname);
+			VCF.dir.fileName[i0+i]=fname;
 			console.log('started parsing '+fname+' ...');
-        	reader.onload=function(x){
+			reader.onload=function(x){
 				var txt=x.target.result;
 				//console.log(txt);
-    	    	VCF.dir.vcfs.push(new VCF(txt));
+    	    	VCF.dir.vcfs[this.i]=new VCF(txt);
+				VCF.dir.vcfs[this.i].fileName=VCF.dir.fileName[this.i];
 				console.log('... done parsing '+fname);
 	    	}
+			
 	    reader["readAsText"](evt.target.files[i]);			
 		}
 		
@@ -72,15 +76,19 @@ VCF.buildUI=function(id){
 	drpBox.setAttribute('data-multiselect',true);
 	//drpBox.setAttribute('data-extensions','.vcf');
 	drpBox.addEventListener("DbxChooserSuccess",function(evt){
+		var i0=VCF.dir.fileName.length; // number of vcfs registered already
 		for(var i=0;i<evt.files.length;i++){
 			var fname=evt.files[i].name;
-			VCF.dir.fileName.push(fname);
+			VCF.dir.fileName[i0+i]=fname;
 			console.log('started parsing '+fname+' ...');
-			jQuery.get(evt.files[i].link,function(txt){
+			var reader = function(txt){
 				//console.log(txt);
-				VCF.dir.vcfs.push(new VCF(txt));
+				VCF.dir.vcfs[this.success.i]=new VCF(txt);
+				VCF.dir.vcfs[this.success.i].fileName=VCF.dir.fileName[this.success.i];
 				console.log('... done parsing '+fname);
-			})
+			};
+			reader.i=i0+i;
+			jQuery.get(evt.files[i].link,reader)
 		}
 		
 	})
