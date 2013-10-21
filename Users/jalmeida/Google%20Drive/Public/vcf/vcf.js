@@ -138,4 +138,3 @@ VCF.parse=function(x){
 	return y;
 }
 
-// testing hotfix again
