@@ -1,4 +1,4 @@
-console.log('vcf loaded');
+console.log('vcf.js loaded');
 
 // this will come handy if you're hosting this form GDrive
 // find . -name "Icon*" -exec rm -f '{}' +
