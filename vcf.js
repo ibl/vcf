@@ -99,7 +99,7 @@ VCF.buildUI=function(id){ // main UI
 	// Read local files
 	var ipf = document.createElement('input'); // input file API
 	ipf.type="file";
-	ipf.setAttribute('multiple');
+	ipf.setAttribute('multiple','multiple');
 	ipf.onchange=function(evt){
 		//var f=evt.target.files[0];
 		var i0=VCF.dir.ids.length; // number of vcfs registered already
