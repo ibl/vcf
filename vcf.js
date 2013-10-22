@@ -228,3 +228,11 @@ VCF.parseHead=function(dt){ // go through a data file and parses data.head
 	// return dt <-- no need, dt was passed by reference
 	
 };
+
+// Context dependent actions
+
+if(!!window.IPE){ // check for the Integrated Pathology Ecosystem, http://ibl.github.io/IPE/
+	IPE.ui.registerTab({id:'VCF',title:'VCFtbox',switchTab:true});
+	VCF.buildUI('VCF');
+}
+
