@@ -43,7 +43,7 @@ this.buildUI=function(id){
 		a.onclick=function(){
 			//lala = this;
 			divHeadBody.textContent=JSON.stringify(this.dt,undefined,1);
-			lala = divHeadBody;
+			//lala = divHeadBody;
 		}
 	}
 	
@@ -94,7 +94,7 @@ VCF.buildUI=function(id){ // main UI
 		div = document.createElement('div');div.id=id;
 		document.body.appendChild(div);	
 	}
-	div.innerHTML='Load VCF file:';
+	div.innerHTML='[<a href="https://github.com/ibl/vcf" target="_blank">source code</a>] Load VCF file:';
 	console.log('UI build')
 	// Read local files
 	var ipf = document.createElement('input'); // input file API
