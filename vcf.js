@@ -4,35 +4,57 @@ console.log('vcf.js loaded');
 // find . -name "Icon*" -exec rm -f '{}' +
 
 
-VCF=function(txt){ // this is the class, for regular VCF functions like parsing come later
-	
+
+VCF=function(txt,id){ // this is the class, for regular VCF functions like parsing come later
+
+/////// methods of a VCF instance ////////////
+
 this.buildUI=function(id){
-	id = id || jmat.uid('vcf');
-	var div = document.getElementById(id)
-	if(!div){
-		div = document.createElement('div');div.id=id;
-		document.body.appendChild(div);	
+	if(!id){id=this.id}
+	var div=document.getElementById(id);
+	if(div==null){ // if this is a new element
+		div=document.createElement('div');
+		div.id=id;
+		VCF.div.appendChild(div);
 	}
-	div.innerHTML='vcf';
+	div.innerHTML='<p style="color:navy"> ID: '+id+'</p>';
 	
-	
-	
-	console.log('ui build')
+	//console.log('building uizito for '+id);		
 }
 
+if(!id){id=VCF.uid('vcf')};
 if(!!txt){
 	this.data=VCF.parse(txt);
+	this.id=id; // the file name if txt was got be a reader
+	if(!!VCF.div){ // check that there is a registered div for VCF data
+		this.buildUI();
+	}
 } else {
 	this.data=undefined;
 }
 	 
 }
 
+//////// methods of the VCF class //////////
+
 VCF.dir={vcfs:[],fileName:[]}; // store parsed vcfs here
 
-VCF.buildUI=function(id){
+VCF.uid=function(prefix){ // create unique ids
+	if(!prefix){prefix='UID'}
+	var uid=prefix+Math.random().toString().slice(2);
+	return uid
+};
+
+VCF.startUI=function(id){  // prepare div for a vcf instance
+	var div = document.createElement('div');
+	div.id=id;
+	div.innerHTML='<p style="color:blue"> ID: '+id+' (processing)</p>';
+	VCF.div.appendChild(div);
+};
+
+VCF.buildUI=function(id){ // main UI
 	
-	id = id || jmat.uid('VCF');
+	id = id || VCF.uid('VCF');
 	var div = document.getElementById(id)
 	if(!div){
 		div = document.createElement('div');div.id=id;
@@ -52,12 +74,13 @@ VCF.buildUI=function(id){
 			reader.i=i0+i;
 			var fname = evt.target.files[i].name;
 			VCF.dir.fileName[i0+i]=fname;
+			VCF.startUI(fname); // a div for this vcf file
 			console.log('started parsing '+fname+' ...');
 			reader.onload=function(x){
 				var txt=x.target.result;
 				//console.log(txt);
-    	    	VCF.dir.vcfs[this.i]=new VCF(txt);
-				VCF.dir.vcfs[this.i].fileName=VCF.dir.fileName[this.i];
+    	    	VCF.dir.vcfs[this.i]=new VCF(txt,VCF.dir.fileName[this.i]);
+				//VCF.dir.vcfs[this.i].fileName=VCF.dir.fileName[this.i];
 				console.log('... done parsing '+fname);
 	    	}
 			
@@ -80,11 +103,12 @@ VCF.buildUI=function(id){
 		for(var i=0;i<evt.files.length;i++){
 			var fname=evt.files[i].name;
 			VCF.dir.fileName[i0+i]=fname;
+			VCF.startUI(fname); // a div for this vcf file
 			console.log('started parsing '+fname+' ...');
 			var reader = function(txt){
 				//console.log(txt);
-				VCF.dir.vcfs[this.success.i]=new VCF(txt);
-				VCF.dir.vcfs[this.success.i].fileName=VCF.dir.fileName[this.success.i];
+				VCF.dir.vcfs[this.success.i]=new VCF(txt,VCF.dir.fileName[this.success.i]);
+				//VCF.dir.vcfs[this.success.i].fileName=VCF.dir.fileName[this.success.i];
 				console.log('... done parsing '+fname);
 			};
 			reader.i=i0+i;
@@ -101,6 +125,7 @@ VCF.buildUI=function(id){
 	sp.setAttribute('data-app-key','8whwijxgl8iic3j');
 	//document.body.appendChild(sp);
 	setTimeout(function(){document.head.appendChild(sp)},1000);
+	VCF.div=div; // registering the div element so vcf instances can find it
 	
 }
 
