@@ -2,6 +2,9 @@ console.log('vcf.js loaded');
 
 // this will come handy if you're hosting this form GDrive
 // find . -name "Icon*" -exec rm -f '{}' +
+// about VCFs:
+// one page: http://vcftools.sourceforge.net/VCF-poster.pdf
+
 
 
 
@@ -17,7 +20,38 @@ this.buildUI=function(id){
 		div.id=id;
 		VCF.div.appendChild(div);
 	}
-	div.innerHTML='<p style="color:navy"> ID: '+id+'</p>';
+	div.innerHTML='<span style="color:navy"> ID: '+id+'</span><br>';
+	this.div=div; // register the div to the instance it is the UI of
+	var dt = this.data; // that's where the fun is :-)
+	// show head and body
+	var divHead = document.createElement('div');divHead.id="divHead";
+	div.appendChild(divHead);
+	var divHeadHead = document.createElement('div');divHeadHead.id="divHeadHead";
+	divHead.appendChild(divHeadHead);
+	var divHeadBody = document.createElement('pre');divHeadBody.id="divHeadBody";
+	divHeadBody.style.fontSize='x-small';
+	divHead.appendChild(divHeadBody);
+	var heads = Object.getOwnPropertyNames(dt.head);
+	for(var i=0;i<heads.length;i++){
+		var a = document.createElement('a');
+		a.textContent=" "+heads[i];
+		a.style.fontSize="x-small";
+		//a.style.color="red";
+		a.i=i;
+		a.dt=dt.head[heads[i]];
+		divHeadHead.appendChild(a);
+		a.onclick=function(){
+			//lala = this;
+			divHeadBody.textContent=JSON.stringify(this.dt,undefined,1);
+			lala = divHeadBody;
+		}
+	}
+	
+	
+	var divBody = document.createElement('div');divBody.id="divBody";
+	div.appendChild(divBody);
+	
+	
 	
 	//console.log('building uizito for '+id);		
 }
@@ -37,7 +71,7 @@ if(!!txt){
 
 //////// methods of the VCF class //////////
 
-VCF.dir={vcfs:[],fileName:[]}; // store parsed vcfs here
+VCF.dir={vcfs:[],ids:[]}; // store parsed vcfs here
 
 VCF.uid=function(prefix){ // create unique ids
 	if(!prefix){prefix='UID'}
@@ -68,19 +102,19 @@ VCF.buildUI=function(id){ // main UI
 	ipf.setAttribute('multiple');
 	ipf.onchange=function(evt){
 		//var f=evt.target.files[0];
-		var i0=VCF.dir.fileName.length; // number of vcfs registered already
+		var i0=VCF.dir.ids.length; // number of vcfs registered already
 		for(var i=0;i<evt.target.files.length;i++){
 			var reader = new FileReader();
 			reader.i=i0+i;
 			var fname = evt.target.files[i].name;
-			VCF.dir.fileName[i0+i]=fname;
+			VCF.dir.ids[i0+i]=fname;
 			VCF.startUI(fname); // a div for this vcf file
 			console.log('started parsing '+fname+' ...');
 			reader.onload=function(x){
 				var txt=x.target.result;
 				//console.log(txt);
-    	    	VCF.dir.vcfs[this.i]=new VCF(txt,VCF.dir.fileName[this.i]);
-				//VCF.dir.vcfs[this.i].fileName=VCF.dir.fileName[this.i];
+    	    	VCF.dir.vcfs[this.i]=new VCF(txt,VCF.dir.ids[this.i]);
+				//VCF.dir.vcfs[this.i].fileName=VCF.dir.ids[this.i];
 				console.log('... done parsing '+fname);
 	    	}
 			
@@ -99,16 +133,16 @@ VCF.buildUI=function(id){ // main UI
 	drpBox.setAttribute('data-multiselect',true);
 	//drpBox.setAttribute('data-extensions','.vcf');
 	drpBox.addEventListener("DbxChooserSuccess",function(evt){
-		var i0=VCF.dir.fileName.length; // number of vcfs registered already
+		var i0=VCF.dir.ids.length; // number of vcfs registered already
 		for(var i=0;i<evt.files.length;i++){
 			var fname=evt.files[i].name;
-			VCF.dir.fileName[i0+i]=fname;
+			VCF.dir.ids[i0+i]=fname;
 			VCF.startUI(fname); // a div for this vcf file
 			console.log('started parsing '+fname+' ...');
 			var reader = function(txt){
 				//console.log(txt);
-				VCF.dir.vcfs[this.success.i]=new VCF(txt,VCF.dir.fileName[this.success.i]);
-				//VCF.dir.vcfs[this.success.i].fileName=VCF.dir.fileName[this.success.i];
+				VCF.dir.vcfs[this.success.i]=new VCF(txt,VCF.dir.ids[this.success.i]);
+				//VCF.dir.vcfs[this.success.i].fileName=VCF.dir.ids[this.success.i];
 				console.log('... done parsing '+fname);
 			};
 			reader.i=i0+i;
@@ -160,5 +194,37 @@ VCF.parse=function(x){
 		}	
 	}
 	y.fields=F;
+	VCF.parseHead(y); // parse head further
 	return y;
-}
+};
+
+VCF.parseHead=function(dt){ // go through a data file and parses data.head
+	var fields = Object.getOwnPropertyNames(dt.head);
+	var newHead={}; // parse old head into here
+	var f, v, str, ID; // place holder for fields, their values, the string line, and IDs during parsing
+	var AV, AVk; // attribute=value pairs during parsing of array fields
+	for(var i=0;i<fields.length;i++){
+		//ID=str.match(/ID=([^\,\>]+)/)[1];
+		//dt.head.INFO[ID]={
+		// array entries are pushed with <> entries
+		f = fields[i];
+		if(dt.head[f][0][0]!='<'){ // the non array head fields
+			dt.head[f]=dt.head[f][0];
+		} else { // the array head fields
+			v={};
+			for(j=0;j<dt.head[f].length;j++){
+				str=dt.head[f][j];
+				ID=str.match(/ID=([^\,\>]+)/)[1];
+				v[ID]={};
+				AV = str.match(/([^\,\<]+=[^\,\>]+)/g);
+				for(k=1;k<AV.length;k++){ // k=0 is if ID's AV
+					AVk=AV[k].match(/[^=\"]+/g);
+					v[ID][AVk[0]]=AVk[1];
+				}
+			}
+			dt.head[f]=v;
+		}
+	};
+	// return dt <-- no need, dt was passed by reference
+	
+};
