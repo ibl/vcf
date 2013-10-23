@@ -125,7 +125,7 @@ VCF.buildUI=function(id){ // main UI
 	}
 	div.appendChild(ipf);
 	// Read dropbox files
-	drpBox = document.createElement('input');
+	var drpBox = document.createElement('input');
 	drpBox.type="dropbox-chooser";
 	drpBox.setAttribute('name','selected-file');
 	drpBox.style.visibility="hidden";
@@ -152,7 +152,7 @@ VCF.buildUI=function(id){ // main UI
 	})
 	//drpBox.setAttribute('data-extensions','.ab1 .fsa');
 	div.appendChild(drpBox);
-	sp = document.createElement('script');
+	var sp = document.createElement('script');
 	sp.type='text/javascript';
 	sp.src='https://www.dropbox.com/static/api/1/dropins.js';
 	sp.id='dropboxjs';
@@ -172,6 +172,9 @@ VCF.parse=function(x){
 	// parse ## head lines
 	var i=0; // ith line
 	var L = x[i].match(/^##(.*)/); // L is the line being parsed
+	if(L==null){
+		throw(x[i]);
+	}
 	
 	while(L.length>1){
 		i++;
