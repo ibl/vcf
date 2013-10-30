@@ -10,3 +10,5 @@ The video of it's very first and very unsteady steps into VCF web computing: [Yo
 \* only web computing is this live: all you, and me, need is a browser ! :-)
 
 ![](http://ibl.github.io/vcf/ScreenShot.png)
+
+development version in [GoogleDrive](https://www.googledrive.com/host/0BwwZEXS3GesiTjlHSmlOcEJaeDA/vcf/)
