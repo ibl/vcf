@@ -5,10 +5,7 @@ console.log('vcf.js loaded');
 // about VCFs:
 // one page: http://vcftools.sourceforge.net/VCF-poster.pdf
 
-
-
-
-VCF=function(txt,id){ // this is the class, for regular VCF functions like parsing come later
+VCF=function(txt,id,i){ // this is the class, for regular VCF functions like parsing come later
 
 /////// methods of a VCF instance ////////////
 
@@ -23,6 +20,8 @@ this.buildUI=function(id){
 	div.innerHTML='<span style="color:navy"> ID: '+id+'</span><br>';
 	this.div=div; // register the div to the instance it is the UI of
 	var dt = this.data; // that's where the fun is :-)
+	this.div.dt=dt;
+	this.div.i=this.i; // the ith vcf
 	// show head and body
 	var divHead = document.createElement('div');divHead.id="divHead";
 	div.appendChild(divHead);
@@ -31,7 +30,7 @@ this.buildUI=function(id){
 	var divHeadBody = document.createElement('pre');divHeadBody.id="divHeadBody";
 	divHeadBody.style.fontSize='x-small';
 	divHead.appendChild(divHeadBody);
-	var heads = Object.getOwnPropertyNames(dt.head);
+	var heads = Object.getOwnPropertyNames(dt.head).sort();
 	for(var i=0;i<heads.length;i++){
 		var a = document.createElement('a');
 		a.textContent=" "+heads[i];
@@ -45,21 +44,57 @@ this.buildUI=function(id){
 			divHeadBody.textContent=JSON.stringify(this.dt,undefined,1);
 			//lala = divHeadBody;
 		}
-	}
-	
-	
+	}	
 	var divBody = document.createElement('div');divBody.id="divBody";
 	div.appendChild(divBody);
 	
+	var divBodyHead = document.createElement('div');divBodyHead.id="divBodyHead";
+	divBody.appendChild(divBodyHead);
+	var sel = document.createElement('select');divBodyHead.appendChild(sel);
+	for(var i=0;i<VCF.modules.length;i++){
+		var opti = document.createElement('option');
+		opti.value=i;
+		opti.textContent=VCF.modules[i].name;
+		sel.appendChild(opti);
+	}
+	sel.style.verticalAlign="top";
+	var lst = document.createElement('select');divBodyHead.appendChild(lst);
+	var lsti = document.createElement('option');lst.appendChild(lsti);lsti.textContent='Workflow Log:';
+	lst.size=2;
+	sel.lst = lst;
+	sel.onchange=function(){
+		var i = parseInt(this.value);
+		var j = this.parentElement.parentElement.parentElement.i;
+		//if(true){ // uncomment when debugging modules
+		if(!VCF.modules[i].fun){
+			var s = document.createElement('script');
+			s.i = i;
+			s.j = j;
+			s.src = VCF.modules[i].url;
+			s.onload = function(){
+				VCF.modules[this.i].fun=jmat.clone2(VCFmodule);
+				VCF.modules[this.i].fun(VCF.dir.vcfs[this.j].div);
+			}
+			document.body.appendChild(s);	
+		} else{
+			VCF.modules[i].fun(VCF.dir.vcfs[j].div);
+		}
+		// register execution
+		var lsti = document.createElement('option');sel.lst.appendChild(lsti);
+		lsti.textContent=VCF.modules[i].name;
+		lsti.selected=true;
+	}
+	// Body Body (analysis results)
+	var divBodyBody = document.createElement('div');divBodyBody.id="divBodyBody";
+	divBody.appendChild(divBodyBody);
 	
-	
-	//console.log('building uizito for '+id);		
 }
 
 if(!id){id=VCF.uid('vcf')};
 if(!!txt){
 	this.data=VCF.parse(txt);
 	this.id=id; // the file name if txt was got be a reader
+	this.i=i; // index in the dir.vcfs
 	if(!!VCF.div){ // check that there is a registered div for VCF data
 		this.buildUI();
 	}
@@ -113,7 +148,7 @@ VCF.buildUI=function(id){ // main UI
 			reader.onload=function(x){
 				var txt=x.target.result;
 				//console.log(txt);
-    	    	VCF.dir.vcfs[this.i]=new VCF(txt,VCF.dir.ids[this.i]);
+    	    	VCF.dir.vcfs[this.i]=new VCF(txt,VCF.dir.ids[this.i],this.i);
 				//VCF.dir.vcfs[this.i].fileName=VCF.dir.ids[this.i];
 				console.log('... done parsing '+fname);
 	    	}
@@ -231,6 +266,34 @@ VCF.parseHead=function(dt){ // go through a data file and parses data.head
 	// return dt <-- no need, dt was passed by reference
 	
 };
+
+// Modules
+
+VCF.modules=[
+
+{
+	name:'Modules',
+	//url:'listAll.js',
+	fun:function(){}
+},
+
+{
+	name:'List all variant calls',
+	url:'listAll.js',
+	//url:'https://www.googledrive.com/host/0BwwZEXS3GesiTjlHSmlOcEJaeDA/vcf/listAll.js'
+	//fun:function(x){console.log(x)}
+},
+
+{
+	name:'Plot all variant calls',
+	url:'plotAll.js',
+	//url:'https://www.googledrive.com/host/0BwwZEXS3GesiTjlHSmlOcEJaeDA/vcf/plotAll.js'
+	//fun:function(x){console.log(x)}
+},
+
+
+];
+
 
 // Context dependent actions
 
