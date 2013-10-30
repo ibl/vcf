@@ -65,8 +65,8 @@ this.buildUI=function(id){
 	sel.onchange=function(){
 		var i = parseInt(this.value);
 		var j = this.parentElement.parentElement.parentElement.i;
-		//if(true){ // uncomment when debugging modules
-		if(!VCF.modules[i].fun){
+		if(true){ // uncomment when debugging modules
+		//if(!VCF.modules[i].fun){ // comment when debugging modules
 			var s = document.createElement('script');
 			s.i = i;
 			s.j = j;
@@ -225,10 +225,11 @@ VCF.parse=function(x){
 	for(var j=0;j<F.length;j++){
 		y.body[F[j]]=[];
 	}
-	for(var i=i+1;i<n;i++){
+	var i0=i+1;
+	for(var i=i0;i<n;i++){
 		L = x[i].split(/\t/);
 		for(var j=0;j<F.length;j++){
-			y.body[F[j]][i]=L[j];
+			y.body[F[j]][i-i0]=L[j];
 		}	
 	}
 	y.fields=F;
@@ -273,8 +274,11 @@ VCF.modules=[
 
 {
 	name:'Modules',
-	//url:'listAll.js',
-	fun:function(){}
+	url:'Modules.js',
+	fun:function(div){
+		var divBB = jQuery('#divBodyBody',div)[0];
+		divBB.innerHTML=""; // clear
+	}
 },
 
 {
