@@ -1,4 +1,4 @@
-console.log('vcf.js loaded');
+console.log('vcf.js loaded :-)');
 
 // this will come handy if you're hosting this form GDrive
 // find . -name "Icon*" -exec rm -f '{}' +
@@ -59,6 +59,7 @@ this.buildUI=function(id){
 	}
 	sel.style.verticalAlign="top";
 	var lst = document.createElement('select');divBodyHead.appendChild(lst);
+	lst.style.fontSize='x-small';
 	var lsti = document.createElement('option');lst.appendChild(lsti);lsti.textContent='Workflow Log:';
 	lst.size=2;
 	sel.lst = lst;
@@ -171,12 +172,13 @@ VCF.buildUI=function(id){ // main UI
 		var i0=VCF.dir.ids.length; // number of vcfs registered already
 		for(var i=0;i<evt.files.length;i++){
 			var fname=evt.files[i].name;
+			var thisi=i0+i;
 			VCF.dir.ids[i0+i]=fname;
 			VCF.startUI(fname); // a div for this vcf file
 			console.log('started parsing '+fname+' ...');
 			var reader = function(txt){
 				//console.log(txt);
-				VCF.dir.vcfs[this.success.i]=new VCF(txt,VCF.dir.ids[this.success.i]);
+				VCF.dir.vcfs[this.success.i]=new VCF(txt,VCF.dir.ids[this.success.i],thisi);
 				//VCF.dir.vcfs[this.success.i].fileName=VCF.dir.ids[this.success.i];
 				console.log('... done parsing '+fname);
 			};
@@ -282,7 +284,7 @@ VCF.modules=[
 },
 
 {
-	name:'List all variant calls',
+	name:'List variant calls (could take a while)',
 	url:'listAll.js',
 	//url:'https://www.googledrive.com/host/0BwwZEXS3GesiTjlHSmlOcEJaeDA/vcf/listAll.js'
 	//fun:function(x){console.log(x)}
