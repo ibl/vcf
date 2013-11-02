@@ -12,7 +12,7 @@ VCFmodule=function(div){
     divBB.innerHTML=""; // clear
     var n = div.dt.body.CHROM.length;
     var tb = document.createElement('table');divBB.appendChild(tb);
-    tb.style.fontSize='x-small'; 
+    tb.style.fontSize='x-small'; tb.id = "listVariantCalls";
     var tbd = document.createElement('tbody');tb.appendChild(tbd);
     var tr,td1,td2,td3;
     for (var i=0;i<n;i++){
@@ -39,6 +39,30 @@ VCFmodule=function(div){
     th3.textContent='ID';
     // add field selector to header
     div.fieldSelector=function(){
+        var i = this.i;
+        var F = Object.getOwnPropertyNames(this.dt.body); // fields
+        var tr = jQuery('#listVariantCalls > thead > tr',this)[0];
+        var th = document.createElement('th');tr.appendChild(th);
+        var se = document.createElement('select');th.appendChild(se);
+        se.dt = this.dt.body;
+        var opt = document.createElement('option');se.appendChild(opt);opt.textContent='Parm:';
+        for(var j=0;j<F.length;j++){
+            var opt = document.createElement('option');se.appendChild(opt);opt.textContent=F[j];
+        }
+        se.onchange = function(evt){
+            var F = this.value; // field
+            var V = this.dt[F]; // values
+            trs = this.parentElement.parentElement.parentElement.parentElement.tBodies[0].childNodes;
+            var td;
+            for(var i=0;i<V.length;i++){
+                td = document.createElement('td');td.textContent=V[i];trs[i].appendChild(td);
+            }
+            this.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.fieldSelector();
+            this.parentElement.innerHTML=F;
+            //console.log(this);
+            //lala = this;
+        }
+                
         4
     }
     div.fieldSelector();

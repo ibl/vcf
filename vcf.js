@@ -51,6 +51,7 @@ this.buildUI=function(id){
 	var divBodyHead = document.createElement('div');divBodyHead.id="divBodyHead";
 	divBody.appendChild(divBodyHead);
 	var sel = document.createElement('select');divBodyHead.appendChild(sel);
+	sel.style.fontSize='x-small';
 	for(var i=0;i<VCF.modules.length;i++){
 		var opti = document.createElement('option');
 		opti.value=i;
