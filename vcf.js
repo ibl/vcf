@@ -286,15 +286,15 @@ VCF.modules=[
 
 {
 	name:'List variant calls (could take a while)',
-	url:'listAll.js',
-	//url:'https://www.googledrive.com/host/0BwwZEXS3GesiTjlHSmlOcEJaeDA/vcf/listAll.js'
+	//url:'listAll.js',
+	url:'https://www.googledrive.com/host/0BwwZEXS3GesiTjlHSmlOcEJaeDA/vcf/listAll.js'
 	//fun:function(x){console.log(x)}
 },
 
 {
 	name:'Plot all variant calls',
-	url:'plotAll.js',
-	//url:'https://www.googledrive.com/host/0BwwZEXS3GesiTjlHSmlOcEJaeDA/vcf/plotAll.js'
+	//url:'plotAll.js',
+	url:'https://www.googledrive.com/host/0BwwZEXS3GesiTjlHSmlOcEJaeDA/vcf/plotAll.js'
 	//fun:function(x){console.log(x)}
 },
 
@@ -307,5 +307,14 @@ VCF.modules=[
 if(!!window.IPE){ // check for the Integrated Pathology Ecosystem, http://ibl.github.io/IPE/
 	IPE.ui.registerTab({id:'VCF',title:'VCFtbox',switchTab:true});
 	VCF.buildUI('VCF');
+}
+
+// Dependencies
+
+if(!window.d3){
+	var s = document.createElement('script');
+	s.src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.3.9/d3.min.js';
+	document.head.appendChild(s);
+	
 }
 
