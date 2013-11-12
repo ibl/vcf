@@ -318,3 +318,10 @@ if(!window.d3){
 	
 }
 
+if(!window.jmat){
+	var s = document.createElement('script');
+	s.src='https://jmat.googlecode.com/git/jmat.js';
+	document.head.appendChild(s);
+	
+}
+
