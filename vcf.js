@@ -4,6 +4,7 @@ console.log('vcf.js loaded :-)');
 // find . -name "Icon*" -exec rm -f '{}' +
 // about VCFs:
 // one page: http://vcftools.sourceforge.net/VCF-poster.pdf
+// get variant summary: jQuery.get('https://www.googledrive.com/host/0BwwZEXS3GesiTjlHSmlOcEJaeDA/vcf/variant_summary.txt')
 
 VCF=function(txt,id,i){ // this is the class, for regular VCF functions like parsing come later
 
