@@ -1,4 +1,4 @@
-console.log('vcf.js loaded :-)');
+console.log('vcf.js loaded :-) !');
 
 // this will come handy if you're hosting this form GDrive
 // find . -name "Icon*" -exec rm -f '{}' +
@@ -22,7 +22,7 @@ this.buildUI=function(id){
 	this.div=div; // register the div to the instance it is the UI of
 	var dt = this.data; // that's where the fun is :-)
 	this.div.dt=dt;
-	this.div.i=this.i; // the ith vcf
+	this.div.i=this.i; // // the ith vcf
 	// show head and body
 	var divHead = document.createElement('div');divHead.id="divHead";
 	div.appendChild(divHead);
