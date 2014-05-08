@@ -1,5 +1,5 @@
  diego=function(){
-   document.getElementById('diegoDiv').textContext="Diego's VCF sandbox";
+   document.getElementById('diegoDiv').textContent="Diego's VCF sandbox";
  }
  
  
