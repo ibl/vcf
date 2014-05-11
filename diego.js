@@ -24,17 +24,23 @@
 		//from here, the object y will be accessible
 	console.log(reader.result.substring(0, 100));
 	
-		var columnsTitle = [];
-		for (x=0; x<y.fields.length; x++){
-			columnsTitle[x]={"title":y['fields'][x], //this goes to title itself
-			"data":y['fields'][x]};//this is the column key
+	
+	//call findVariationsOnGenes()
+	var variantsFound = findVariantsOnGenes(y.body);
+	
+	//fetch data for myTable
+		var columnsTitleBefore = Object.getOwnPropertyNames(variantsFound[0]);
+		columnsTitle = [];
+		for (x=0; x<columnsTitleBefore.length; x++){
+			columnsTitle[x]={"title":columnsTitleBefore[x], //goes to title itself
+			"data":columnsTitleBefore[x]}; //column key
 		};
 		
 		
 	//populate myTable
 	    $('#myTable').dataTable({
 		
-		"data": y.body,
+		"data": variantsFound,
 		
         "columns": columnsTitle,
     } );
