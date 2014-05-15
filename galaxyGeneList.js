@@ -1,3 +1,38 @@
+//function that find variations on GPS oncogenes.
+var findVariantsOnGenes = function(vcfBody){
+  var sample = vcfBody;
+  var list = getGeneList();
+  var variantsFound = [];
+
+  for (var counter = 0; counter < sample.length; counter++){//sample.length; x++){
+
+    for (var counter2 = 0; counter2 < list.length; counter2++){//yy < list.length; y++){
+
+
+    if (sample[counter]['CHROM']==list[counter2]['chrom']){
+      if (sample[counter]['POS']>list[counter2]['txStart']&&
+      sample[counter]['POS']< list[counter2]['txEnd']){
+        variantsFound.push({
+          'gene':list[counter2]['geneSymbol'],
+          'chromosome':sample[counter]['CHROM'],
+          'position':sample[counter]['POS'],
+          'strand':list[counter2]['strand'],
+          'kgID':list[counter2]['kgID'],
+          'txStart':list[counter2]['txStart'],
+          'txEnd':list[counter2]['txEnd'],
+          'mRNA':list[counter2]['mRNA'],
+          'description':list[counter2]['description'],
+          'exonCount':list[counter2]['exonCount'],
+          'proteinID':list[counter2]['proteinID'],
+        });
+    }
+    }
+
+  }
+}
+return  variantsFound;
+}
+
 var getGeneList = function(){
 
   var geneList = [
@@ -5702,37 +5737,9 @@ var getGeneList = function(){
     "GPSfilter":"NOTCH1"
   }
 ]
-  
-  
+
+
 
 
 return geneList;
 };
-
-//function that find variations on GPS oncogenes.
-var findVariantsOnGenes = function(vcfBody){
-  var sample = vcfBody;
-  var list = getGeneList();
-  var variantsFound = [];
-  
-  for (var counter = 0; counter < sample.length; counter++){//sample.length; x++){
-    
-    for (var counter2 = 0; counter2 < list.length; counter2++){//yy < list.length; y++){
-     
-      
-    if (sample[counter]['CHROM']==list[counter2]['chrom']){
-      if (sample[counter]['POS']>list[counter2]['txStart']&&
-      sample[counter]['POS']< list[counter2]['txEnd']){
-        variantsFound.push({
-          'gene':list[counter2]['geneSymbol'],
-          'chromosome':sample[counter]['CHROM'],
-          'position':sample[counter]['POS'],
-          'vcfLine':counter,
-        });
-    }
-    }
-    
-  }
-}
-return  variantsFound;
-}
