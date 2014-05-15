@@ -20,10 +20,10 @@ var findVariantsOnGenes = function(vcfBody){
           'kgID':list[counter2]['kgID'],
           'txStart':list[counter2]['txStart'],
           'txEnd':list[counter2]['txEnd'],
-          'mRNA':list[counter2]['mRNA'],
+          'mRNA':"<a href='http://www.uniprot.org/uniprot/?query=" + list[counter2]['mRNA'] + "' target='_blank'>" +list[counter2]['mRNA']+ "</a>",
           'description':list[counter2]['description'],
           'exonCount':list[counter2]['exonCount'],
-          'proteinID':list[counter2]['proteinID'],
+          'proteinID':"<a href='http://www.uniprot.org/uniprot/?query=" + list[counter2]['proteinID']+"' target='_blank'>"+list[counter2]['proteinID']+"</a>",
         });
     }
     }
