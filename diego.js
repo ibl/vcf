@@ -1,7 +1,14 @@
 var diego = function(){
 	document.getElementById('diegoDiv').textContent="Diego's VCF sandbox";
 	document.getElementById('pickFile').addEventListener('change', fileSelected, false);
+	$("#myButton").click(function(){
+		$("#myTable_wrapper").fadeToggle(); // "#myTable_wrapper" is created at page loads dataTable;
+	});
 };
+
+var toogleTable =function(){
+	
+}
 
 var fileSelected = function (event) {
 	// template data, if any, is available in 'this'
@@ -69,19 +76,11 @@ var VCFparse=function(x){
 		y.body[i-i0]={};
 		y.body[i-i0]['line']=i-i0;
 		for(var j=0;j<F.length;j++){
-			/*var myObjecct = {};
-			L[j]=L[j].split(/\;/);
-			for (var c = 0; c < L[j].lenght; c++){
-				var splited = L[j][c].split(/\=/);
-				var parameterName = splited[0];
-				var valueOf = splited[1];
-				L[j][c]={};
-				L[j][c]{parameterName:valueOf};
-			}
-			*/
+			
+			//Parse field values
 			switch (F[j]){
 				case 'ALT':
-					y.body[i-i0][F[j]]=L[j].split(/\,/); // L[j] must be an object
+					y.body[i-i0][F[j]]=L[j].split(/\,/); 
 					break;
 				case 'INFO':
 					var splited = L[j].split(/\;/);
