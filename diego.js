@@ -1,60 +1,42 @@
- diego=function(){
-   document.getElementById('diegoDiv').textContent="Diego's VCF sandbox";
-   //
-   document.getElementById('pickFile').addEventListener('change', fileSelected, false);
-   
+var diego = function(){
+	document.getElementById('diegoDiv').textContent="Diego's VCF sandbox";
+	document.getElementById('pickFile').addEventListener('change', fileSelected, false);
+};
 
-
- };
- 
- fileSelected=function (event) {
-      // template data, if any, is available in 'this'
-   
-   var input = event.target;
+var fileSelected = function (event) {
+	// template data, if any, is available in 'this'
+   	var input = event.target;
 	var reader = new FileReader();
-	
 	reader.onload = function(event){
-	var reader = event.target;
-	
-	var vcfTxt = reader.result;
-	//calling VCFparse();
-	console.log('triggered change input');
-	//call VCFparse function
-	VCFparse(vcfTxt);
+		var reader = event.target;
+		var vcfTxt = reader.result;
+		//call VCFparse();
+		console.log('triggered change input');
+		//call VCFparse function
+		VCFparse(vcfTxt);
 		//from here, the object y will be accessible
-	console.log(reader.result.substring(0, 100));
-	
-	
-	//call findVariationsOnGenes()
-	var variantsFound = findVariantsOnGenes(y.body);
-	
-	//fetch data for myTable
+		console.log(reader.result.substring(0, 100));
+		//call findVariationsOnGenes()
+		var variantsFound = findVariantsOnGenes(y.body);
+		//fetch data for myTable
 		var columnsTitleBefore = Object.getOwnPropertyNames(variantsFound[0]);
 		columnsTitle = [];
+		
 		for (x=0; x<columnsTitleBefore.length; x++){
 			columnsTitle[x]={"title":columnsTitleBefore[x], //goes to title itself
 			"data":columnsTitleBefore[x]}; //column key
-		};
+			};
 		
-		
-	//populate myTable
+		//populate myTable
 	    $('#myTable').dataTable({
-		
 		"data": variantsFound,
-		
-        "columns": columnsTitle,
-    } );
-	
-		};
-		
-		
-        reader.readAsText(input.files[0]);
-	
-
-		
+		"columns": columnsTitle,
+    	});
 	};
+	    reader.readAsText(input.files[0]);
+};
     
-    VCFparse=function(x){
+var VCFparse=function(x){
 	console.log('(parsing a '+x.length+' long string)');
 	x=x.split(/\n/);// transforms into a array finding new line caracter
 	var n=x.length; // number of lines in the file
@@ -63,6 +45,7 @@
 	// parse ## head lines
 	var i=0; // ith line
 	var L = x[i].match(/^##(.*)/); // L is the line being parsed
+	
 	if(L==null){
 		throw(x[i]);
 	}
@@ -77,61 +60,77 @@
 		L = x[i].match(/^##(.*)/);
 		if(L==null){L=[]}; // break	
 	}
-	
 	// parse # body lines
 	L=x[i].match(/^#([^#].*)/)[1]; // use first line to define fields
-	
 	var F = L.split(/\t/);
-	
-	//trying to create docs with # of line
-	/*
-	for(var j=0;j<F.length;j++){
-		y.body[F[j]]=[];
-	}
-	*/
 	var i0=i+1;
-	
-	for(var i=i0;i<n;i++){ //go ahead from the first line of data on body to the end of vcf
-		
+	for(var i=i0;i<n;i++){ //go from the first line of data on body to the end of vcf
 		L = x[i].split(/\t/);
 		y.body[i-i0]={};
 		y.body[i-i0]['line']=i-i0;
 		for(var j=0;j<F.length;j++){
-			y.body[i-i0][F[j]]=L[j];
+			/*var myObjecct = {};
+			L[j]=L[j].split(/\;/);
+			for (var c = 0; c < L[j].lenght; c++){
+				var splited = L[j][c].split(/\=/);
+				var parameterName = splited[0];
+				var valueOf = splited[1];
+				L[j][c]={};
+				L[j][c]{parameterName:valueOf};
+			}
+			*/
+			switch (F[j]){
+				case 'ALT':
+					y.body[i-i0][F[j]]=L[j].split(/\,/); // L[j] must be an object
+					break;
+				case 'INFO':
+					var splited = L[j].split(/\;/);
+					var myObject = {};
+					for (var z = 0 ; z < splited.length; z++){
+					var splitedFurther = splited[z].split(/\=/);
+					var myParamether = splitedFurther[0];
+					var myValue = splitedFurther[1];
+					myObject[myParamether]=myValue;
+					}
+					y.body[i-i0][F[j]]=myObject;
+					break;
+				case 'FORMAT':
+					y.body[i-i0][F[j]]=L[j].split(/:/);
+					break;
+				case 'CHROM':
+					y.body[i-i0][F[j]]=L[j].match(/\d|x|y/i)[0];
+					break;
+				default:
+					y.body[i-i0][F[j]]=L[j];
 		}
-			var xx = {};
-			xx=y.body[i-i0];			
+	}
+			//Work with these lines to insert on mongoDB collection
+			//var xx = {};
+			//xx=y.body[i-i0];			
 			
 	}
-	y.fields=F;//this line will be deleted
+	y.fields=F;
 	
 	
 	VCFparseHead(y); // parse head further
 		
-	//var headLines = Object.getOwnPropertyNames(y.head);
 	for (var i in y['head']){
 	
 			
 		if (y['head'][i] === Object(y['head'][i])){
 			for (var j in y['head'][i]){
-		
-		
-		var xx = {};
-		xx = y['head'][i][j];
-		xx.ID = j;
-		xx.title = i;
-		
-		//, 'details':y['head'][i]});
+		//Work with these lines to insert on mongoDB collection
+		//var xx = {};
+		//xx = y['head'][i][j];
+		//xx.ID = j;
+		//xx.title = i;
 			};
 		};
     };
-	
-	return y;
-	
-	
+return y;
 };
 
-VCFparseHead=function(dt){ // go through a data file and parses data.head
+var VCFparseHead = function(dt){ // go through a data file and parses data.head
 	var fields = Object.getOwnPropertyNames(dt.head);
 	var newHead={}; // parse old head into here
 	var f, v, str, ID; // place holder for fields, their values, the string line, and IDs during parsing

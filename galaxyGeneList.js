@@ -4,12 +4,12 @@ var findVariantsOnGenes = function(vcfBody){
   var list = getGeneList();
   var variantsFound = [];
 
-  for (var counter = 0; counter < sample.length; counter++){//sample.length; x++){
+  for (var counter = 0; counter < sample.length; counter++){
 
-    for (var counter2 = 0; counter2 < list.length; counter2++){//yy < list.length; y++){
+    for (var counter2 = 0; counter2 < list.length; counter2++){
 
 
-    if (sample[counter]['CHROM']==list[counter2]['chrom']){
+    if (sample[counter]['CHROM']==list[counter2]['chrom'].match(/\d|x|y/i)[0]){
       if (sample[counter]['POS']>list[counter2]['txStart']&&
       sample[counter]['POS']< list[counter2]['txEnd']){
         variantsFound.push({
