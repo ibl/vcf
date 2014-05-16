@@ -101,7 +101,11 @@ var VCFparse=function(x){
 					y.body[i-i0][F[j]]=L[j].match(/\d|x|y/i)[0];
 					break;
 				default:
-					y.body[i-i0][F[j]]=L[j];
+					if (L[j].search(":")==-1) { // Search for ":" on others fields values
+					y.body[i-i0][F[j]]=L[j];	
+					}else{
+					y.body[i-i0][F[j]]=L[j].split(/:/); //Intent to split values of sample fields
+					}
 		}
 	}
 			//Work with these lines to insert on mongoDB collection
