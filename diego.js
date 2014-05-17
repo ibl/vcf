@@ -90,15 +90,20 @@ var VCFparse=function(x){
 					var splited = L[j].split(/\;/);
 					var myObject = {};
 					for (var z = 0 ; z < splited.length; z++){
-					var splitedFurther = splited[z].split(/\=/);
-					var myParamether = splitedFurther[0];
-					var myValue = splitedFurther[1];
-					myObject[myParamether]=myValue;
+						if (splited[z].search(/\=/)==-1){
+							myObject["flags"]=splited[z];
+							}else{
+								var splitedFurther = splited[z].split(/\=/);
+								var myParamether = splitedFurther[0];
+								var myValue = [];
+								myValue = splitedFurther[1].split(/\,/);
+								myObject[myParamether]=myValue;
+							}
+						y.body[i-i0][F[j]]=myObject;
 					}
-					y.body[i-i0][F[j]]=myObject;
 					break;
 				case 'FORMAT':
-					y.body[i-i0][F[j]]=L[j].split(/:/);
+					y.body[i-i0][F[j]]=L[j].split(/\:/);
 					break;
 				case 'CHROM':
 					y.body[i-i0][F[j]]=L[j].match(/\d|x|y/i)[0];
@@ -107,7 +112,7 @@ var VCFparse=function(x){
 					if (L[j].search(":")==-1) { // Search for ":" on others fields values
 						y.body[i-i0][F[j]]=L[j];	
 					}else{
-						y.body[i-i0][F[j]]=L[j].split(/:/); //If found, it suposes that is a sample filed.
+						y.body[i-i0][F[j]]=L[j].split(/\:/); //If found, it suposes that is a sample filed.
 					
 					var splited = L[j].split(/\:/);
 					var myObject = {};
