@@ -8,12 +8,19 @@
 	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.0/css/jquery.dataTables.css">
 	<script src="diego.js"></script>
 	<script src="galaxyGeneList.js"></script>
+	
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
 </head>
 <body>
 	<div class="container" id="diegoDiv">
 	</div>
 	<input type="file" id="pickFile"><br><img id= "output">
 	<input type="button" id="myButton" value="Hide/Show table">
+	
+	<input type="button" id="myGraphButton" value="Show graph">
+	
+	<div id="chart_div"></div>
 	<table id ="myTable" class="display" ></table>	
 
 		<script>

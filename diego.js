@@ -2,13 +2,15 @@ var diego = function(){
 	document.getElementById('diegoDiv').textContent="Diego's VCF sandbox";
 	document.getElementById('pickFile').addEventListener('change', fileSelected, false);
 	$("#myButton").click(function(){
-		$("#myTable_wrapper").fadeToggle(); // "#myTable_wrapper" is created at page loads dataTable;
+		$("#myTable_wrapper").fadeToggle(); // "#myTable_wrapper" is created when page loads dataTable;
 	});
-};
+	$("#myGraphButton").click(function(){
+		
+ 
+});
 
-var toogleTable =function(){
-	
 }
+
 
 var fileSelected = function (event) {
 	// template data, if any, is available in 'this'
@@ -79,10 +81,12 @@ var VCFparse=function(x){
 			
 			//Parse field values
 			switch (F[j]){
-				case 'ALT':
+				// ID - semi-colon separated list
+				// 
+				case 'ALT': //coma separated list
 					y.body[i-i0][F[j]]=L[j].split(/\,/); 
 					break;
-				case 'INFO':
+				case 'INFO': //semi-colon separeted list of keys:(coma separated values list/ It could be one per allele)
 					var splited = L[j].split(/\;/);
 					var myObject = {};
 					for (var z = 0 ; z < splited.length; z++){
@@ -101,9 +105,19 @@ var VCFparse=function(x){
 					break;
 				default:
 					if (L[j].search(":")==-1) { // Search for ":" on others fields values
-					y.body[i-i0][F[j]]=L[j];	
+						y.body[i-i0][F[j]]=L[j];	
 					}else{
-					y.body[i-i0][F[j]]=L[j].split(/:/); //Intent to split values of sample fields
+						y.body[i-i0][F[j]]=L[j].split(/:/); //If found, it suposes that is a sample filed.
+					
+					var splited = L[j].split(/\:/);
+					var myObject = {};
+					for (var z = 0 ; z < splited.length; z++){
+						var splitedFurther = splited[z].split(/\,/);
+						var myParamether = y.body[i-i0]['FORMAT'][z];
+						myObject[myParamether]=splitedFurther;
+						
+					}
+					y.body[i-i0][F[j]]=myObject;
 					}
 		}
 	}
