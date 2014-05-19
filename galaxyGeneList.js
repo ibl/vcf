@@ -13,7 +13,7 @@ var findVariantsOnGenes = function(vcfBody){
       if (sample[counter]['POS']>list[counter2]['txStart']&&
       sample[counter]['POS']< list[counter2]['txEnd']){
         variantsFound.push({
-          'gene':"<a href='http://genomemaps.org?gene=" + list[counter2]['geneSymbol'] +"&zoom=50' target='_blank'>"+ list[counter2]['geneSymbol'] + "</a>",
+          'gene':"<a href='http://genomemaps.org?gene=" + list[counter2]['geneSymbol'] +"&zoom=50' target='_blank' title='"+list[counter2]['description']+"'>"+ list[counter2]['geneSymbol'] + "</a>",
           'chromosome':sample[counter]['CHROM'],
           'position':sample[counter]['POS'],
           'strand':list[counter2]['strand'],
@@ -21,7 +21,6 @@ var findVariantsOnGenes = function(vcfBody){
           'txStart':list[counter2]['txStart'],
           'txEnd':list[counter2]['txEnd'],
           'mRNA':"<a href='http://www.uniprot.org/uniprot/?query=" + list[counter2]['mRNA'] + "' target='_blank'>" +list[counter2]['mRNA']+ "</a>",
-          'description':list[counter2]['description'],
           'exonCount':list[counter2]['exonCount'],
           'proteinID':"<a href='http://www.uniprot.org/uniprot/?query=" + list[counter2]['proteinID']+"' target='_blank'>"+list[counter2]['proteinID']+"</a>",
         });
