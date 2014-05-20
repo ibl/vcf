@@ -106,7 +106,7 @@ var VCFparse=function(x){
 					y.body[i-i0][F[j]]=L[j].split(/\:/);
 					break;
 				case 'CHROM':
-					y.body[i-i0][F[j]]=L[j].match(/\d|x|y/i)[0];
+					y.body[i-i0][F[j]]=L[j].match(/\d{1,}|x|y/i)[0];
 					break;
 				default:
 					if (L[j].search(":")==-1) { // Search for ":" on others fields values
