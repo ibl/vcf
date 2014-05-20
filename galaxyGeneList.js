@@ -13,9 +13,10 @@ var findVariantsOnGenes = function(vcfBody){
       if (sample[counter]['POS']>list[counter2]['txStart']&&
       sample[counter]['POS']< list[counter2]['txEnd']){
         variantsFound.push({
-          'gene':"<a href='http://genomemaps.org?gene=" + list[counter2]['geneSymbol'] +"&zoom=50' target='_blank' title='"+list[counter2]['description']+"'>"+ list[counter2]['geneSymbol'] + "</a>",
+          'gene':"<a href='http://genomemaps.org?gene=" + list[counter2]['geneSymbol'] +"&zoom=50'\
+          target='_blank' title='"+list[counter2]['description']+"'>"+ list[counter2]['geneSymbol'] + "</a>",
           'chromosome':sample[counter]['CHROM'],
-          'position':sample[counter]['POS'],
+          'position':"<a href='http://genomemaps.org?region=" + sample[counter]['CHROM'] + ":" + sample[counter]['POS'] + "' & target='_blank' >" +sample[counter]['POS'] +"</a>",
           'strand':list[counter2]['strand'],
           'kgID':list[counter2]['kgID'],
           'txStart':list[counter2]['txStart'],
