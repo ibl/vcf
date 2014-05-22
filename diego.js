@@ -12,6 +12,9 @@ var diego = function(){
 		
 		var data = getSumVariants();
 		
+		data.sort(function(ob1, ob2){ return ob2.hit - ob1.hit});
+
+		
     	var	barHeight = 20
 
 		var x = d3.scale.linear()
