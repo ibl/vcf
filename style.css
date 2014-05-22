@@ -1,0 +1,20 @@
+.chart rect {
+  fill: steelblue;
+}
+
+.chart text {
+  fill: black;
+  font: 10px sans-serif;
+  text-anchor: end;
+}
+
+.chart {
+  position: relative;
+  
+  left: 20
+}
+
+div#myTable_wrapper {
+    float: left;
+    width: 1150
+}

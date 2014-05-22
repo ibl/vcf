@@ -5,11 +5,88 @@ var diego = function(){
 		$("#myTable_wrapper").fadeToggle(); // "#myTable_wrapper" is created when page loads dataTable;
 	});
 	$("#myGraphButton").click(function(){
+		
+		var margin = {top: 20, right: 30, bottom: 20, left: 50};
+		var width = 1000 - margin.left - margin.right;
+		var height = 1000 - margin.top - margin.bottom;
+		
+		var data = getSumVariants();
+		
+    	var	barHeight = 20
+
+		var x = d3.scale.linear()
+    		.range([0, width]);
+
+		var chart = d3.select(".chart")
+    		.attr("width", width + margin.left + margin.right)
+    		.attr("height", height + margin.top + margin.bottom)
+  			.append("g")
+    		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+/*var data = [
+  {name: "Locke",    value:  4},
+  {name: "Reyes",    value:  8},
+  {name: "Ford",     value: 15},
+  {name: "Jarrah",   value: 16},
+  {name: "Shephard", value: 23},
+  {name: "Kwon",     value: 42}
+];*/
 
 
-});
+  x.domain([0, d3.max(data, function(d) { return d.hit; })]);
 
+  chart.attr("height", barHeight * data.length);
+
+  var bar = chart.selectAll("g")
+      .data(data)
+    .enter().append("g")
+      .attr("transform", function(d, i) { return "translate(100," + i * barHeight + ")"; });
+
+  bar.append("rect")
+      .attr("width", function(d) { return x(d.hit); })
+      .attr("height", barHeight - 1);
+
+  bar.append("text")
+      .attr("x", function(d) { return -2; })
+      .attr("y", barHeight / 2)
+      .attr("dy", ".35em")
+      .text(function(d) { return d.gene + " - " + d.hit; });
+
+function type(d) {
+  d.hit = +d.hit; // coerce to number
+  return d;
 }
+
+	});
+	}
+			
+			
+
+		var getSumVariants = function () {
+			var summary = [];
+			//summary[0]=[];
+			//summary[1]=[];
+			var data = findVariantsOnGenes(y.body);
+			var c = 0;
+			for (var z=0; z < data.length; z++){
+				
+				if (z==0){
+					
+					summary[c]={"gene":data[z]["linkLessGene"], "hit":1};
+					
+				}else if (data[z]["linkLessGene"]===data[z-1]["linkLessGene"]){
+					summary[c].hit ++;
+
+				} else {
+					c++;	
+					summary[c]={"gene":data[z]["linkLessGene"], "hit":1};
+				}
+				
+				
+			}
+				
+			return summary;	
+		};
 
 
 var fileSelected = function (event) {
@@ -25,9 +102,9 @@ var fileSelected = function (event) {
 		VCFparse(vcfTxt);
 		//from here, the object y will be accessible
 		console.log(reader.result.substring(0, 100));
-		//call findVariationsOnGenes()
-		var variantsFound = findVariantsOnGenes(y.body);
+		
 		//fetch data for myTable
+		var variantsFound = findVariantsOnGenes(y.body);
 		var columnsTitleBefore = Object.getOwnPropertyNames(variantsFound[0]);
 		columnsTitle = [];
 
