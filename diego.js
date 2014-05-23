@@ -47,13 +47,14 @@ var diego = function(){
 
   bar.append("rect")
       .attr("width", function(d) { return x(d.hit); })
-      .attr("height", barHeight - 1);
+      .attr("height", barHeight - 1)
+	  .attr("xlink:href", function(d){return d.gene + " - " + d.hit});
 
   bar.append("text")
       .attr("x", function(d) { return -2; })
       .attr("y", barHeight / 2)
       .attr("dy", ".35em")
-      .text(function(d) { return d.gene + " - " + d.hit; });
+      .text(function(d) { return d.gene + " - " + d.hit });
 
 function type(d) {
   d.hit = +d.hit; // coerce to number
