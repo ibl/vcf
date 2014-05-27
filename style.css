@@ -15,6 +15,6 @@
 }
 
 div#myTable_wrapper {
-    float: left;
+    position: left;
     width: 1150
 }

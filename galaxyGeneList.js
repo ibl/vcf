@@ -1,3 +1,23 @@
+var getSumVariants = function () {
+  var summary = [];
+  var data = findVariantsOnGenes(y.body);
+  var c = 0;
+  for (var z=0; z < data.length; z++){
+				
+    if (z==0){
+					
+     summary[c]={"gene":data[z]["linkLessGene"], "hit":1};
+     
+      }else if (data[z]["linkLessGene"]===data[z-1]["linkLessGene"]){
+        summary[c].hit ++;
+      } else {
+        c++;	
+        summary[c]={"gene":data[z]["linkLessGene"], "hit":1};
+      }
+}
+return summary;	
+};
+
 //function that find variations on GPS oncogenes.
 var findVariantsOnGenes = function(vcfBody){
   var sample = vcfBody;
@@ -23,7 +43,7 @@ var findVariantsOnGenes = function(vcfBody){
           'Gene End (bp)':list[counter2]['Gene End (bp)'],
           'Band':list[counter2]['Band']
         });
-    }
+      }
     }
 
   }
