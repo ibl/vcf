@@ -9,12 +9,14 @@
 }
 
 .chart {
-  position: relative;
-  
-  left: 20
+  float: left;
 }
 
 div#myTable_wrapper {
-    position: left;
-    width: 1150
+    float : left;
+    width: 500
+}
+
+.button {
+  float : left ;
 }

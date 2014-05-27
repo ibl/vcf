@@ -5,17 +5,18 @@ vcf.getSumVariants = function () {
   var summary = [];
   var data = this.findVariantsOnGenes(vcf.body);
   var c = 0;
+  var urlFilter = /'(.*?)'/;
   for (var z=0; z < data.length; z++){
 				
     if (z==0){
-					
-     summary[c]={"gene":data[z]["linkLessGene"], "hit":1};
+	
+     summary[c]={"gene":data[z]["gene"], "hit":1, "url":data[z]["gene"].match(urlFilter)[1]};
      
-      }else if (data[z]["linkLessGene"]===data[z-1]["linkLessGene"]){
+      }else if (data[z]["gene"]===data[z-1]["gene"]){
         summary[c].hit ++;
       } else {
         c++;	
-        summary[c]={"gene":data[z]["linkLessGene"], "hit":1};
+        summary[c]={"gene":data[z]["gene"], "hit":1, "url":data[z]["gene"].match(urlFilter)[1]};
       }
 }
 return summary;	
@@ -37,15 +38,16 @@ vcf.findVariantsOnGenes = function(){
       if (sample[counter]['POS']>list[counter2]['Gene Start (bp)']&&
       sample[counter]['POS']< list[counter2]['Gene End (bp)']){
         variantsFound.push({
-          'linkLessGene':list[counter2]['HGNC symbol'],
-          'gene':"<a href='https://dcc.icgc.org/genes/" + list[counter2]['Ensembl Gene ID'] +"'\
-          target='_blank' title='"+list[counter2]['Description']+"'>"+ list[counter2]['HGNC symbol'] + "</a>",
           'chromosome':sample[counter]['CHROM'],
           'position':"<a href='http://genomemaps.org?region=" + sample[counter]['CHROM'] + ":" + sample[counter]['POS'] + "' & target='_blank' >" +sample[counter]['POS'] +"</a>",
           'strand':list[counter2]['Strand'],
-          'Gene Start (bp)':list[counter2]['Gene Start (bp)'],
-          'Gene End (bp)':list[counter2]['Gene End (bp)'],
-          'Band':list[counter2]['Band']
+          'linkLessGene':list[counter2]['HGNC symbol'],
+          'gene':"<a href='https://dcc.icgc.org/genes/" + list[counter2]['Ensembl Gene ID'] +"'\
+          target='_blank' title='"+list[counter2]['Description']+"'>"+ list[counter2]['HGNC symbol'] + "</a>"
+          
+          //'Gene Start (bp)':list[counter2]['Gene Start (bp)'],
+          //'Gene End (bp)':list[counter2]['Gene End (bp)'],
+          //'Band':list[counter2]['Band']
         });
       }
     }

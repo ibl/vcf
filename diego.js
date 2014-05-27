@@ -8,16 +8,16 @@ var diego = function(){
 	
 	$("#myGraphButton").click(function(){
 		
-		var margin = {top: 20, right: 30, bottom: 20, left: 50};
-		var width = 1000 - margin.left - margin.right;
-		var height = 1000 - margin.top - margin.bottom;
+		var margin = {top: 20, right: 20, bottom: 20, left: 100};
+		var width = 400 - margin.left - margin.right;
+		var height = 400 - margin.top - margin.bottom;
 		
 		var data = vcf.getSumVariants();
 		
 		data.sort(function(ob1, ob2){ return ob2.hit - ob1.hit});
 
 		
-    	var	barHeight = 20
+    	var	barHeight = 15
 
 		var x = d3.scale.linear()
     		.range([0, width]);
@@ -35,18 +35,28 @@ var diego = function(){
   		var bar = chart.selectAll("g")
       		.data(data)
     		.enter().append("g")
-      		.attr("transform", function(d, i) { return "translate(100," + i * barHeight + ")"; });
+      		.attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
 
-  		bar.append("rect")
-      		.attr("width", function(d) { return x(d.hit); })
+//  		bar.append("rect")
+//      		.attr("width", function(d) { return x(d.hit); })
+//      		.attr("height", barHeight - 1)
+//	  		.attr("xlink:href", function(d){return d.gene })
+//		.append("a")
+//			.attr("xlink:href", function(d){return d.gene });
+			
+		bar.append("a")
+  			.attr("xlink:href", function(d){return d.url})  // <-- reading the new "url" property
+			.attr("target", "_blank")
+		.append("rect")
       		.attr("height", barHeight - 1)
-	  		.attr("xlink:href", function(d){return d.gene + " - " + d.hit});
+      		.attr("width", function(d) { return x(d.hit) })
 
-  		bar.append("text")
-      		.attr("x", function(d) { return -2; })
+			
+		bar.append("text")
+      		.attr("x", function(d) { return 0; })
       		.attr("y", barHeight / 2)
       		.attr("dy", ".35em")
-      		.text(function(d) { return d.gene + " - " + d.hit });
+      		.text(function(d) { return  d.gene.match(/>(.*?)</)[1] + "-" + d.hit });
 
 		function type(d) {
   			d.hit = +d.hit; // coerce to number
@@ -87,5 +97,7 @@ var fileSelected = function (event) {
     	});
 	};
 	    reader.readAsText(input.files[0]);
+		
+		
 };
 
