@@ -1,5 +1,8 @@
 var vcf = {};
 
+vcf.getHeadTree = function () {
+	
+}
 
 vcf.getSumVariants = function () {
   var summary = [];
@@ -41,7 +44,7 @@ vcf.findVariantsOnGenes = function(){
           'chromosome':sample[counter]['CHROM'],
           'position':"<a href='http://genomemaps.org?region=" + sample[counter]['CHROM'] + ":" + sample[counter]['POS'] + "' & target='_blank' >" +sample[counter]['POS'] +"</a>",
           'strand':list[counter2]['Strand'],
-          'linkLessGene':list[counter2]['HGNC symbol'],
+          //'linkLessGene':list[counter2]['HGNC symbol'],
           'gene':"<a href='https://dcc.icgc.org/genes/" + list[counter2]['Ensembl Gene ID'] +"'\
           target='_blank' title='"+list[counter2]['Description']+"'>"+ list[counter2]['HGNC symbol'] + "</a>"
           
