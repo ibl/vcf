@@ -133,7 +133,7 @@ var data = vcf.body;
       .attr("cy", function(d) { return y(d["POS"]); })
       .style("fill", function(d) { return color(d.species); })
 	.append("svg:title")
-		.text(function(d) { return "Pos: "+d["POS"]+", Ref: "+d["REF"]+", Alt: "+d["ALT"]; });
+		.text(function(d) { return "Pos: "+d["CHROM"]+":"+d["POS"]+", Ref: "+d["REF"]+", Alt: "+d["ALT"]; });
 
 
 	  
