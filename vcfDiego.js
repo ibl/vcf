@@ -4,6 +4,17 @@ vcf.getHeadTree = function () {
 	
 }
 
+vcf.getSNP = function() {
+	var snps=[];
+	
+	for(var x=0; x < this.body.length; x++){
+		if (this.body[x].ID !== "."){
+			snps.push(this.body[x].ID)
+		}
+	}
+return snps;
+};
+
 vcf.getSumVariants = function () {
   var summary = [];
   var data = this.findVariantsOnGenes(vcf.body);
