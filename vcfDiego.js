@@ -51,11 +51,12 @@ vcf.findVariantsOnGenes = function(){
     if (sample[counter]['CHROM']==list[counter2]['Chromosome Name'].match(/\d|x|y/i)[0]){
       if (sample[counter]['POS']>list[counter2]['Gene Start (bp)']&&
       sample[counter]['POS']< list[counter2]['Gene End (bp)']){
-        variantsFound.push({
+		//tests if ID field not equals "."  
+		variantsFound.push({
           'chromosome':sample[counter]['CHROM'],
           'position':"<a href='http://genomemaps.org?region=" + sample[counter]['CHROM'] + ":" + sample[counter]['POS'] + "' & target='_blank' >" +sample[counter]['POS'] +"</a>",
           'strand':list[counter2]['Strand'],
-		  'ID':sample[counter]['ID'],
+		  'ID':"<a href='http://www.ncbi.nlm.nih.gov/projects/SNP/snp_ref.cgi?rs="+sample[counter]['ID'].match(/(\.)|[rs]+(.+)/)[2]+" '& target='_blank'>"+sample[counter]['ID']+"</a>",
           //'linkLessGene':list[counter2]['HGNC symbol'],
           'gene':"<a href='https://dcc.icgc.org/genes/" + list[counter2]['Ensembl Gene ID'] +"'\
           target='_blank' title='"+list[counter2]['Description']+"'>"+ list[counter2]['HGNC symbol'] + "</a>"
