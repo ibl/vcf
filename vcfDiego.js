@@ -1,10 +1,8 @@
 var vcf = {};
 
-vcf.getHeadTree = function () {
-	
-}
+vcf.getHeadTree = function () {} // planing how to do it
 
-vcf.getSNP = function() {
+vcf.getSNP = function() { //work, but is meaningless now
 	var snps=[];
 	
 	for(var x=0; x < this.body.length; x++){
@@ -51,12 +49,16 @@ vcf.findVariantsOnGenes = function(){
     if (sample[counter]['CHROM']==list[counter2]['Chromosome Name'].match(/\d|x|y/i)[0]){
       if (sample[counter]['POS']>list[counter2]['Gene Start (bp)']&&
       sample[counter]['POS']< list[counter2]['Gene End (bp)']){
-		//tests if ID field not equals "."  
+		  
+		  var zzz = sample[counter]['ID'].match(/(\.)|[rs]+(.+)/)[2];
+		  var z = getPathogenicSnpList().indexOf(zzz);
+
 		variantsFound.push({
           'chromosome':sample[counter]['CHROM'],
           'position':"<a href='http://genomemaps.org?region=" + sample[counter]['CHROM'] + ":" + sample[counter]['POS'] + "' & target='_blank' >" +sample[counter]['POS'] +"</a>",
           'strand':list[counter2]['Strand'],
 		  'ID':"<a href='http://www.ncbi.nlm.nih.gov/projects/SNP/snp_ref.cgi?rs="+sample[counter]['ID'].match(/(\.)|[rs]+(.+)/)[2]+" '& target='_blank'>"+sample[counter]['ID']+"</a>",
+		  'Pathogenic':z,
           //'linkLessGene':list[counter2]['HGNC symbol'],
           'gene':"<a href='https://dcc.icgc.org/genes/" + list[counter2]['Ensembl Gene ID'] +"'\
           target='_blank' title='"+list[counter2]['Description']+"'>"+ list[counter2]['HGNC symbol'] + "</a>"
@@ -79,6 +81,8 @@ vcf.parse=function(x){
 	console.log('(parsing a '+x.length+' long string)');
 	x=x.split(/\n/);// transforms into a array finding new line caracter
 	var n=x.length; // number of lines in the file
+	console.log("file has "+ n +  " lines")
+	this.numberOfLines = n;
 	if(x[n-1].length==0){n=n-1}; // remove trailing blank
 	//vcf={head:{},body:[]};//create y object. It will be the parsed VCF
 	vcf.head={};

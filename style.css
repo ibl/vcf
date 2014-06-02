@@ -17,6 +17,10 @@ div#myTable_wrapper {
     width: 500
 }
 
+div#summary {
+  display: block;
+}
+
 .button {
   float : left ;
 }

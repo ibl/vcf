@@ -170,6 +170,7 @@ var fileSelected = function (event) {
 		//from here, the object y will be accessible
 		console.log(reader.result.substring(0, 100));
 		
+
 		//fetch data for myTable
 		var variantsFound = vcf.findVariantsOnGenes(vcf.body);
 		var columnsTitleBefore = Object.getOwnPropertyNames(variantsFound[0]);
@@ -186,9 +187,12 @@ var fileSelected = function (event) {
 		"data": variantsFound,
 		"columns": columnsTitle,
     	});
-	};
-	    reader.readAsText(input.files[0]);
 		
+	document.getElementById('summary').innerHTML="<b>Number of lines </b><span>"+vcf.numberOfLines+"</span><br>"+"\
+	<b>Number of Colunms on Body </b><span>"+vcf.fields.length+"</span>";
+
+	};
+	    reader.readAsText(input.files[0]);		
 		
 };
 
