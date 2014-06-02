@@ -1087,3 +1087,4 @@ var getGeneList = function(){
 ]
 return geneList;
 }
+//http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=snp&term=pathogenic[Clinical%20Significance]&rettype=json&RetMax=3000000
