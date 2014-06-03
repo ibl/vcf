@@ -17,12 +17,13 @@ div#myTable_wrapper {
     width: 500
 }
 
-div#summary {
+.container {
   display: block;
   border-style: none none none solid;
   border-color: green;
   font-size: 12
 }
+
 
 .button {
   float : left ;

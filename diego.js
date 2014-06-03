@@ -190,7 +190,15 @@ var fileSelected = function (event) {
 		
 	document.getElementById('summary').innerHTML="<b>Number of lines: </b><span>"+vcf.numberOfLines+"</span><br>"+"\
 	<b>Number of Colunms on Body: </b><span>"+vcf.fields.length+"</span><br>\
-	<b>Fields: </b><span>"+vcf.fields+"<span/>";
+	<b>Fields: </b><span>"+vcf.fields+"<span/>"
+	
+	var html = '<b>Head - RDF format: </b><br><textarea rows="15" cols="80">';
+	var lala = vcf.rdfize()
+	for (var x = 0; x < lala.length; x++){
+		html+=lala[x]+"\n";
+	};
+	html+="</textarea>";
+	document.getElementById('rdf').innerHTML=html.toString();
 
 	};
 	    reader.readAsText(input.files[0]);		
