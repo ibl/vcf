@@ -189,7 +189,8 @@ var fileSelected = function (event) {
     	});
 		
 	document.getElementById('summary').innerHTML="<b>Number of lines </b><span>"+vcf.numberOfLines+"</span><br>"+"\
-	<b>Number of Colunms on Body </b><span>"+vcf.fields.length+"</span>";
+	<b>Number of Colunms on Body </b><span>"+vcf.fields.length+"</span><br>\
+	<span>"+vcf.fields+"<span/>";
 
 	};
 	    reader.readAsText(input.files[0]);		
