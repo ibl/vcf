@@ -19,6 +19,9 @@ div#myTable_wrapper {
 
 div#summary {
   display: block;
+  border-style: none none none solid;
+  border-color: green;
+  font-size: 12
 }
 
 .button {
