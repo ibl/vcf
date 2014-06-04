@@ -13,8 +13,12 @@
 }
 
 div#myTable_wrapper {
-    float : left;
-    width: 500
+    float: left;
+    width: 500;
+}
+
+div#rdf {
+    float : right;
 }
 
 .container {
@@ -22,6 +26,7 @@ div#myTable_wrapper {
   border-style: none none none solid;
   border-color: green;
   font-size: 12
+  float: left
 }
 
 

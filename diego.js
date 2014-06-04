@@ -6,6 +6,22 @@ var diego = function(){
 		$("#myTable_wrapper").fadeToggle(); // "#myTable_wrapper" is created when page loads dataTable;
 	});
 	
+	$("#myRdfButton").click(function(){
+		var html = '<b>Head - RDF format: </b><br><textarea rows="50" cols="80">';
+	var lala = vcf.rdfize();
+	for (var x = 0; x < lala.length; x++){
+		html+=lala[x]+"\n";
+	};
+	var lele = vcf.rdfizeBody();
+	for (var x = 0; x < lele.length; x++){
+		html+=lele[x]+"\n";
+	};
+	html+="</textarea>";
+	document.getElementById('rdf').innerHTML=html.toString();
+
+	
+	});
+	
 	$("#myGraphButton").click(function(){
 		
 		var margin = {top: 20, right: 20, bottom: 20, left: 100};
@@ -192,14 +208,7 @@ var fileSelected = function (event) {
 	<b>Number of Colunms on Body: </b><span>"+vcf.fields.length+"</span><br>\
 	<b>Fields: </b><span>"+vcf.fields+"<span/>"
 	
-	var html = '<b>Head - RDF format: </b><br><textarea rows="15" cols="80">';
-	var lala = vcf.rdfize()
-	for (var x = 0; x < lala.length; x++){
-		html+=lala[x]+"\n";
-	};
-	html+="</textarea>";
-	document.getElementById('rdf').innerHTML=html.toString();
-
+	
 	};
 	    reader.readAsText(input.files[0]);		
 		
