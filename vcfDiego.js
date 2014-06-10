@@ -202,8 +202,11 @@ vcf.parseHead = function(dt){ // go through a data file and parses data.head
 		//dt.head.INFO[ID]={
 		// array entries are pushed with <> entries
 		f = fields[i];
-		if(dt.head[f][0][0]!='<'){ // the non array head fields
+		if(dt.head[f][0][0]!='<' && dt.head[f][0][0]!='"' ){ // the non array head fields
 			dt.head[f]=dt.head[f][0];
+		} else if(dt.head[f][0][0]!='<' && dt.head[f][0][0]=='"'){ // the non array head fields
+			console.log(dt.head[f][0]);
+			dt.head[f]=dt.head[f][0].match(/(?:\")(.+)(?:\")/)[1];
 		} else { // the array head fields
 			v={};
 			for(j=0;j<dt.head[f].length;j++){

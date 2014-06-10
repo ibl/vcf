@@ -7,26 +7,27 @@ var diego = function(){
 	});
 	
 	$("#myRdfButton").click(function(){
-		var html = '<b>Head - RDF format: </b><br><textarea rows="50" cols="80">';
+		//var html = '<b>Head - RDF format: </b><br><textarea rows="50" cols="200">';
+	var html='';
 	var lala = vcf.rdfize();
 	for (var x = 0; x < lala.length; x++){
 		html+=lala[x]+"\n";
 	};
-	var lele = vcf.rdfizeBody();
-	for (var x = 0; x < lele.length; x++){
-		html+=lele[x]+"\n";
-	};
-	html+="</textarea>";
-	document.getElementById('rdf').innerHTML=html.toString();
-	//jsfidlle example
-//	function download(filename, text) {
-//    var pom = document.createElement('a');
-//    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-//    pom.setAttribute('download', filename);
-//    pom.click();
-//}
+	//var lele = vcf.rdfizeBody();
+	//for (var x = 0; x < lele.length; x++){
+	//	html+=lele[x]+"\n";
+	//};
+	//html+="</textarea>";
+	blob = URL.createObjectURL(new Blob([html]))
+	a = document.createElement("a")
+	a.href = blob
+	a.download = 'test.ttl'
+	a.innerText = 'Download ttl'
+	document.body.appendChild( a )
+	
+	document.getElementById('rdf').innerHTML='<b>Head - RDF format: </b><br><textarea rows="50" cols="200">'+html+'</textarea>';
 
-//download('test.txt', html);
+
 	
 	});
 	
