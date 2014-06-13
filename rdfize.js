@@ -50,33 +50,63 @@ answer.push('');// inserts a white line between prefixs and statements
             }
         }
     }
+w=this.fields;
+
+for (var x in w){
+    answer.push(prefix + w[x] + ' a ' + prefix + 'field .');
+};
+    
     
 w=this.body;
     
         for (var x in w){
+            answer.push(prefix + 'row' + x + ' ' + propertiesPrefix + 'position <' + locationPrefixUrl + w[x]['CHROM']+':'+w[x]['POS']+'> .');
+            
+
         
             if (typeof w[x] === 'object'){
             
             for (var y in w[x]){
                //answer.push(prefix + x + ' ' + propertiesPrefix + "hasId " + y +' .');
                 
-                if (typeof w[x][y] === 'object'){
-                    for (var z in w[x][y]){
-                        if (Array.isArray(w[x][y][z])){
-                            for (var a in w[x][y][z]){
-                                answer.push("<"+locationPrefixUrl + w[x]['CHROM']+':'+w[x]['POS']+'> ' +propertiesPrefix+z+'_'+a+' "' + w[x][y][z][a] + '" .');
-                            }
-                        } else {
-                        //answer.push('<'+prefix + fileName+ '/'+x+'/> <'+prefix +y+'/'+z+'/> "'+w[x][y][z]+'" .');
-                        }   
-                    }
-                } else if (Array.isArray(w[x][y])){
+                 if (Array.isArray(w[x][y])){
                     for (var z in w[x][y]){
                         
-                        //answer.push('<'+prefix + fileName+ '/' +x+'/> <'+prefix +y+'/'+z+'/> "'+w[x][y][z]+'" .');
+                        if (typeof (w[x][y][z])!=='object') {
+                            answer.push(prefix + 'row' + x + ' ' + prefix + y + ' ' + prefix + w[x][y][z] + ' .');
+                            } else if (typeof (w[x][y][z])==='object'){
+                                
+                                
+                                if (typeof (counter)==='undefined'){
+                                var counter = 0;    
+                                };
+                                
+                                var sNode = 'sampleNode' + counter;
+                                answer.push(prefix + 'row' + x + ' ' + propertiesPrefix + 'has' + ' ' + prefix + sNode + ' .');
+
+
+                                for (var a in w[x][y][z]){
+                                    
+
+                                    
+                                    answer.push(prefix + sNode + ' ' + prefix +  a + ' "' + w[x][y][z][a] + '" .');
+                                    
+                                    
+                                    
+                                }
+                                counter ++;
+                            };
+                    }
+                } else if (typeof w[x][y] === 'object'){
+                    for (var z in w[x][y]){
+                        
+                     //   if  (y!==='SAMPLES') {answer.push(prefix + 'row' + x + ' ' + prefix + y + ' ' + prefix + z + ' .');}
                         
                     }
+                    
                 } else if (typeof w[x][y] === 'string'){
+                    answer.push(prefix + 'row' + x + ' ' + prefix + y + ' "' + w[x][y] + '" .');
+
                     ////for (var z in w[x][y]){
                         //answer.push('<'+prefix + fileName+ '/' +x+'/> <'+prefix +y+'/> "'+w[x][y]+'" .');
                     ////}

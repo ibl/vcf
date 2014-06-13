@@ -153,6 +153,8 @@ vcf.parse=function(x){
 
 					var splited = L[j].split(/\:/); // split to correspond to FORMAT field
 					var myObject = {};
+					myObject['sampleName']=F[j];
+
 					for (var z = 0 ; z < splited.length; z++){
 						var splitedFurther = splited[z].split(/\,/);// for each value found, split on ","
 						var myParamether = vcf.body[i-i0]['FORMAT'][z];// find correspondent FORMAT
@@ -171,24 +173,24 @@ vcf.parse=function(x){
 							var secondGtNumber = myObject['GT'][0].match(/(.+)(["\/|])(.+)/)[3];
 							
 							if (firstGtNumber == 0){
-							myObject['firstParentalAllele']=vcf.body[i-i0]['REF'];
+								myObject['firstParentalAllele']=vcf.body[i-i0]['REF'];
 								}else{
 								myObject['firstParentalAllele']=vcf.body[i-i0]['ALT'][firstGtNumber];
-							}
+								};
 							
 							if (secondGtNumber == 0){
-							myObject['secondParentalAllele']=vcf.body[i-i0]['REF'];	
-								} else {
-								myObject['secondParentalAllele']=vcf.body[i-i0]['ALT'][secondGtNumber-1];
-							}
-						}
+								myObject['secondParentalAllele']=vcf.body[i-i0]['REF'];	
+									} else {
+										myObject['secondParentalAllele']=vcf.body[i-i0]['ALT'][secondGtNumber-1];
+									};
+						};
 						
-						if (typeof (vcf.body[i-i0]['SAMPLES']=='undefined')){
-							vcf.body[i-i0]['SAMPLES']=[];	
-						}
-					}
+						if (typeof (vcf.body[i-i0]['SAMPLE']=='undefined')){
+							vcf.body[i-i0]['SAMPLE']=[];	
+						};
+					};
 					
-					vcf.body[i-i0]['SAMPLES'].push({'sampleName':F[j],'sampleDetails':myObject});
+					vcf.body[i-i0]['SAMPLE'].push(myObject);
 						
 				}	
 		}
