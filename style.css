@@ -9,27 +9,27 @@
 }
 
 .chart {
-  float: left;
+/*  float: left;*/
 }
 
 div#myTable_wrapper {
-    float: left;
-    width: 500;
+/*    float: left; */
+/*    width: 500; */
 }
 
 div#rdf {
-    float : right;
+/*    float : right; */
 }
 
 .container {
-  display: block;
+/*  display: block; */
   border-style: none none none solid;
   border-color: green;
   font-size: 12
-  float: left
+/*  float: left */
 }
 
 
 .button {
-  float : left ;
+/*  float : left ; */
 }

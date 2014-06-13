@@ -148,18 +148,49 @@ vcf.parse=function(x){
 					if (L[j].search(":")==-1) { // Search for ":" on others fields values
 						vcf.body[i-i0][F[j]]=L[j];
 					}else{
-						vcf.body[i-i0][F[j]]=L[j].split(/\:/); //If found, it suposes that is a sample filed.
+						//If found, it suposes that is a sample filed.
+						//vcf.body[i-i0][F[j]]=L[j].split(/\:/); //erase it
 
-					var splited = L[j].split(/\:/);
+					var splited = L[j].split(/\:/); // split to correspond to FORMAT field
 					var myObject = {};
 					for (var z = 0 ; z < splited.length; z++){
-						var splitedFurther = splited[z].split(/\,/);
-						var myParamether = vcf.body[i-i0]['FORMAT'][z];
-						myObject[myParamether]=splitedFurther;
-
+						var splitedFurther = splited[z].split(/\,/);// for each value found, split on ","
+						var myParamether = vcf.body[i-i0]['FORMAT'][z];// find correspondent FORMAT
+						myObject[myParamether]=splitedFurther;//join FORMAT and value
+						
+						if (myParamether==='GT'){ // go into details if FORMAT is genotype
+						
+							if (myObject['GT'][0].search(/\|/)>-1){ // [0] is needed why GT is an array
+								myObject['isPhased'] = true;
+								} else if (myObject['GT'][0].search(/\//)>-1)	{
+								myObject['isPhased'] = false;	
+								};
+							
+							// Think in an array of alleles all[]: all[0]=REF, all[1]=ALT[1-1] , all[2]=ALT[2-1] and so on.
+							var firstGtNumber = myObject['GT'][0].match(/(.+)(["\/|])(.+)/)[1];
+							var secondGtNumber = myObject['GT'][0].match(/(.+)(["\/|])(.+)/)[3];
+							
+							if (firstGtNumber == 0){
+							myObject['firstParentalAllele']=vcf.body[i-i0]['REF'];
+								}else{
+								myObject['firstParentalAllele']=vcf.body[i-i0]['ALT'][firstGtNumber];
+							}
+							
+							if (secondGtNumber == 0){
+							myObject['secondParentalAllele']=vcf.body[i-i0]['REF'];	
+								} else {
+								myObject['secondParentalAllele']=vcf.body[i-i0]['ALT'][secondGtNumber-1];
+							}
+						}
+						
+						if (typeof (vcf.body[i-i0]['SAMPLES']=='undefined')){
+							vcf.body[i-i0]['SAMPLES']=[];	
+						}
 					}
-					vcf.body[i-i0][F[j]]=myObject;
-					}
+					
+					vcf.body[i-i0]['SAMPLES'].push({'sampleName':F[j],'sampleDetails':myObject});
+						
+				}	
 		}
 	}
 			//Work with these lines to insert on mongoDB collection
@@ -205,7 +236,6 @@ vcf.parseHead = function(dt){ // go through a data file and parses data.head
 		if(dt.head[f][0][0]!='<' && dt.head[f][0][0]!='"' ){ // the non array head fields
 			dt.head[f]=dt.head[f][0];
 		} else if(dt.head[f][0][0]!='<' && dt.head[f][0][0]=='"'){ // the non array head fields
-			console.log(dt.head[f][0]);
 			dt.head[f]=dt.head[f][0].match(/(?:\")(.+)(?:\")/)[1];
 		} else { // the array head fields
 			v={};
@@ -1094,4 +1124,3 @@ var getGeneList = function(){
 ]
 return geneList;
 }
-//http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=snp&term=pathogenic[Clinical%20Significance]&rettype=json&RetMax=3000000

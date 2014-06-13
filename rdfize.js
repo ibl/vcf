@@ -2,9 +2,9 @@
 vcf.rdfize = function(){
 var answer=[]    
 var w=this.head;
-var fileName = 'FileName';
+var fileName = 'fileNameString';
 var prefix = 'vcf:'; //It's important to put : at the end of string. vcf: is a example'
-var prefixUrl = 'http://vcf.este.mathbiol.org/';
+var prefixUrl = 'http://vcf.este.mathbiol.org/'+fileName+"#";
 var propertiesPrefix = 'prop:'; //It's important to put : at the end of string. vcf: is a example'
 var propertiesPrefixUrl = 'http://vcf.este.mathbiol.org/properties/';
 var locationPrefix = 'genomemaps:'
@@ -19,24 +19,28 @@ answer.push('');// inserts a white line between prefixs and statements
     
         for (var x in w){
             
-            answer.push ( prefix + fileName + ' ' + propertiesPrefix + 'headerItem "' + (x) +  '" .')
-        
-            if (typeof w[x] === 'string' && w[x].search(".")!== -1){
-                answer.push( prefix + fileName + ' <' + propertiesPrefixUrl + (x) +'> "'+w[x]+'" .');
-            }else if (typeof w[x] === 'string' && w[x].search(".")=== -1) {
-                answer.push( prefix + fileName + ' ' + propertiesPrefix + (x) +' "'+w[x]+'" .');
+            if (x.search(/\./) > -1){
+                answer.push ( '<'+ prefixUrl + x + '> a ' + prefix + 'header .')
+                    }else{
+                        answer.push ( prefix + x + ' a ' + prefix + 'header .')
+                }; 
+            
+            if (typeof w[x] === 'string' && x.search(/\./) > -1){
+                answer.push( '<'+prefixUrl + x +'> ' + propertiesPrefix + 'value "'+w[x]+'" .');
+            }else if (typeof w[x] === 'string' && x.search(/\./)=== -1) {
+                answer.push( prefix + x +' ' + propertiesPrefix + 'value' +' "'+w[x]+'" .');
                 
-            } else if (Array.isArray(w[x])){ //did't find any array on Head
+            }else if (Array.isArray(w[x])){ //did't find any array on Head
             
                 for (var y in w[x]){
-                    answer.push(prefix + fileName +'/'+ w[x][y]+' '+prefix+'is "'+x+'" .');
+                    answer.push(prefix +'/'+ w[x][y]+' '+prefix+'is "'+x+'" .');
                 }
         
             } else if (typeof w[x] === 'object'){
             
             for (var y in w[x]){
                 
-                answer.push(prefix + fileName+' '+ propertiesPrefix + x + ' "' +y+ '" .');
+                answer.push(prefix + y +' a ' +prefix + x + ' .');
                 
                 if (typeof w[x][y] === 'object'){
                     for (var z in w[x][y]){
