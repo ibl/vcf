@@ -1,4 +1,5 @@
 var diego = function(){
+	console.log("loaded diego.js");
 	document.getElementById('diegoDiv').textContent="Diego's VCF sandbox";
 	document.getElementById('pickFile').addEventListener('change', fileSelected, false);
 	
@@ -193,7 +194,7 @@ var fileSelected = function (event) {
 		//call VCFparse function
 		vcf.parse(vcfTxt);
 		//from here, the object y will be accessible
-		console.log(reader.result.substring(0, 100));
+		console.log('first 100 text caracters: "'+reader.result.substring(0, 100)+'"');
 		
 
 		//fetch data for myTable

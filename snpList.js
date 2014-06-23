@@ -1,5 +1,5 @@
 //xml from http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=snp&term=pathogenic[Clinical%20Significance]&rettype=json&RetMax=3000000
-
+console.log("loaded snpList.js");
 var getPathogenicSnpList = function (){
 
 var PathogenicSnpList = {

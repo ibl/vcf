@@ -1,3 +1,5 @@
+console.log("loaded vcfDiego.js");
+
 var vcf = {};
 
 vcf.getHeadTree = function () {} // planing how to do it
@@ -106,6 +108,8 @@ vcf.parse=function(x){
 		if(L==null){L=[]}; // break
 	}
 	// parse # body lines
+	console.log	("parse # body lines");
+	
 	L=x[i].match(/^#([^#].*)/)[1]; // use first line to define fields
 	var F = L.split(/\t/);
 	var i0=i+1;
@@ -113,9 +117,12 @@ vcf.parse=function(x){
 		L = x[i].split(/\t/);
 		vcf.body[i-i0]={};
 		vcf.body[i-i0]['line']=i-i0;
+		console.log("Parse line " + (i-i0));
 		for(var j=0;j<F.length;j++){
 
 			//Parse field values
+			
+			
 			switch (F[j]){
 				// ID - semi-colon separated list
 				//
@@ -226,6 +233,7 @@ return vcf;
 };
 //VCFparseHead
 vcf.parseHead = function(dt){ // go through a data file and parses data.head
+	console.log	("parsing head");
 	var fields = Object.getOwnPropertyNames(dt.head);
 	var newHead={}; // parse old head into here
 	var f, v, str, ID; // place holder for fields, their values, the string line, and IDs during parsing

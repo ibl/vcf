@@ -1,4 +1,5 @@
 
+console.log("loaded rdfize.js");
 vcf.rdfize = function(){
 var answer=[]    
 var w=this.head;
