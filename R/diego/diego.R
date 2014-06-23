@@ -1,4 +1,5 @@
 myfunction <- function(file, groups){
+  #test on second commit
   ##file = "~/Documents/Patients VCFs/glioma.vcf"
   ##groups <- read.csv("~/Documents/Patients VCFs/groups.csv") ##study_id field must be present
   groups <- read.csv(groups)
