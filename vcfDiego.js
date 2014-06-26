@@ -229,6 +229,12 @@ vcf.parse=function(x){
 			};
 		};
     };
+//workaround to parse CSQ data 
+for (var x; x < this.length; x++) {
+	for(var y; y< this.body[x].length["CSQ"]; y++){
+		this.body[x]["CSQ"][y]=this.body[x]["CSQ"][y].split("|")
+	}
+}	
 return vcf;
 };
 //VCFparseHead
