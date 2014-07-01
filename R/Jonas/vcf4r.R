@@ -1,11 +1,6 @@
-# VCF4R parsing VCF by JSA
-# also a chance to learn a bit of R
-# http://cran.r-project.org/doc/manuals/R-intro.pdf
-# http://cran.r-project.org/doc/manuals/r-release/R-lang.html
-# quick introduction to dataypes: http://www.r-tutor.com/r-introduction
-# debugging with RStudio:
-# https://support.rstudio.com/hc/en-us/articles/200713843-Debugging-with-RStudio
-
+#' converts a VCF text file into an R structure with a head and a body
+#' @param fname is the file name
+#' @seealso \code{\link{r2vcf}} does the opposite
 vcf2r <- function(fname){
   fid = file(fname,"r") # opens file channel for reading
   y = list(head=list(c("fileformat")),body=data.frame());
@@ -40,3 +35,47 @@ vcf2r <- function(fname){
   # Done, return y
   y
 }
+
+#' converts a list structure created by vcf2r back onto a VCF text file
+#' @param y is a list with a $head and a $body
+#' @param fname is the file name
+#' @seealso vcf2r does the opposite
+r2vcf <- function(y,fname){ # write the reverse conversion, of a vcf list structure back to a vcf text file
+  # make sure this is a vcf list
+  if(is.null(y$head$fileformat)){
+    stop("sorry, this doesn't look like a VCF list")
+  }
+  # 1. Start by file format
+  fid = file(fname,"w") # opens file channel for writing
+  L = paste("##fileformat=",y$head$fileformat,sep="")
+  writeLines(L, con = fid, sep="\n")
+  # 2. Write the rest of the head
+  for(h in names(y$head)){
+    if((nchar(h)>0)&&(h!="fileformat")){
+      for(i in 1:length(y$head[h][[1]])){
+        L=paste("##",h,"=",y$head[h][[1]][i],sep="")
+        writeLines(L, con = fid, sep="\n")
+      }
+    }
+  }
+  # 3. write row headers of the body
+  L=paste("#",paste(colnames(y$body),collapse="\t"),sep="")
+  writeLines(L, con = fid, sep="\n")
+  for(i in 1:nrow(y$body)){
+    L=paste(as.vector(t(y$body[i,])),collapse="\t")
+    writeLines(L, con = fid, sep="\n")
+  }
+  close.connection(fid) # done writing
+  x=y
+}
+
+#' shortens a vcf structure created by vcf2r by sampling n lines
+#' @param vcf a named lst created by vcf2r
+#' @param n is teh number of lines
+#' @seealso vcf2r, whcih creates the vcf, and r2vcf which writes it back to a .vcf text file
+vcfn <- function(vcf,n=10){
+  # shorten $body file to consider only n random rows
+  vcf$body=vcf$body[sample(1:nrow(vcf$body),n),]
+  vcf
+}
+
