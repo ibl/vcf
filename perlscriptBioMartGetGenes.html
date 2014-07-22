@@ -1,0 +1,65 @@
+
+<!-- saved from url=(0075)http://useast.ensembl.org/biomart/martview/cde7ac3c0cdd8cad16910ffefe342d42 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body><pre>
+# An example script demonstrating the use of BioMart API.
+# This perl API representation is only available for configuration versions &gt;=  0.5 
+use strict;
+use BioMart::Initializer;
+use BioMart::Query;
+use BioMart::QueryRunner;
+
+my $confFile = "PATH TO YOUR REGISTRY FILE UNDER biomart-perl/conf/. For Biomart Central Registry navigate to
+						http://www.biomart.org/biomart/martservice?type=registry";
+#
+# NB: change action to 'clean' if you wish to start a fresh configuration  
+# and to 'cached' if you want to skip configuration step on subsequent runs from the same registry
+#
+
+my $action='cached';
+my $initializer = BioMart::Initializer-&gt;new('registryFile'=&gt;$confFile, 'action'=&gt;$action);
+my $registry = $initializer-&gt;getRegistry;
+
+my $query = BioMart::Query-&gt;new('registry'=&gt;$registry,'virtualSchemaName'=&gt;'default');
+
+		
+	$query-&gt;setDataset("hsapiens_gene_ensembl");
+	$query-&gt;addFilter("source", ["ensembl_havana"]);
+	$query-&gt;addFilter("hgnc_symbol", ["ABL1","AKT1","ALK","APC","ASXL1","ATM","BRAF","CEBPA","CTNNB1","DNMT3A","ERBB2","EGFR","ESR1","FGFR4","FLT3","IDH1","IDH2","JAK2","KIT","KMT2A","KRAS","MAPK1","MAP2K2","MET","MPL","MYC","MYD88","NOTCH1","NPM1","NRAS","PDGFRA","PIK3CA","PTEN","PTPN11","RB1","RET","RUNX1","STK11","TET2","TP53","VHL","WT1"]);
+	$query-&gt;addAttribute("ensembl_gene_id");
+	$query-&gt;addAttribute("description");
+	$query-&gt;addAttribute("chromosome_name");
+	$query-&gt;addAttribute("start_position");
+	$query-&gt;addAttribute("end_position");
+	$query-&gt;addAttribute("strand");
+	$query-&gt;addAttribute("band");
+	$query-&gt;addAttribute("external_gene_id");
+	$query-&gt;addAttribute("external_gene_db");
+	$query-&gt;addAttribute("transcript_count");
+	$query-&gt;addAttribute("percentage_gc_content");
+	$query-&gt;addAttribute("gene_biotype");
+	$query-&gt;addAttribute("source");
+	$query-&gt;addAttribute("status");
+	$query-&gt;addAttribute("entrezgene");
+	$query-&gt;addAttribute("hgnc_id");
+	$query-&gt;addAttribute("hgnc_symbol");
+
+$query-&gt;formatter("CSV");
+
+my $query_runner = BioMart::QueryRunner-&gt;new();
+############################## GET COUNT ############################
+# $query-&gt;count(1);
+# $query_runner-&gt;execute($query);
+# print $query_runner-&gt;getCount();
+#####################################################################
+
+
+############################## GET RESULTS ##########################
+# to obtain unique rows only
+# $query_runner-&gt;uniqueRowsOnly(1);
+
+$query_runner-&gt;execute($query);
+$query_runner-&gt;printHeader();
+$query_runner-&gt;printResults();
+$query_runner-&gt;printFooter();
+#####################################################################
+</pre></body></html>
