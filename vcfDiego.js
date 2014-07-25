@@ -117,7 +117,7 @@ vcf.parse=function(x){
 		L = x[i].split(/\t/);
 		vcf.body[i-i0]={};
 		vcf.body[i-i0]['line']=i-i0;
-		console.log("Parse line " + (i-i0));
+		//console.log("Parse line " + (i-i0));
 		for(var j=0;j<F.length;j++){
 
 			//Parse field values
@@ -157,8 +157,13 @@ vcf.parse=function(x){
 					}else{
 						//If found, it suposes that is a sample filed.
 						//vcf.body[i-i0][F[j]]=L[j].split(/\:/); //erase it
-
 					var splited = L[j].split(/\:/); // split to correspond to FORMAT field
+					
+					//this.body[i-i0]['SAMPLE']=[];	
+					if (typeof this.body[i-i0]['SAMPLE']=='undefined'){
+							this.body[i-i0]['SAMPLE']=[];	
+						};
+					
 					var myObject = {};
 					myObject['sampleName']=F[j];
 
@@ -169,7 +174,7 @@ vcf.parse=function(x){
 						
 						if (myParamether==='GT'){ // go into details if FORMAT is genotype
 						
-							if (myObject['GT'][0].search(/\|/)>-1){ // [0] is needed why GT is an array
+							if (myObject['GT'][0].search(/\|/)>-1){ // [0] is needed because GT is an array
 								myObject['isPhased'] = true;
 								} else if (myObject['GT'][0].search(/\//)>-1)	{
 								myObject['isPhased'] = false;	
@@ -187,19 +192,30 @@ vcf.parse=function(x){
 							
 							if (secondGtNumber == 0){
 								myObject['secondParentalAllele']=vcf.body[i-i0]['REF'];	
-									} else {
-										myObject['secondParentalAllele']=vcf.body[i-i0]['ALT'][secondGtNumber-1];
-									};
+								} else {
+									myObject['secondParentalAllele']=vcf.body[i-i0]['ALT'][secondGtNumber-1];
+								};
+								
+						//if (typeof vcf.body[i-i0]['SAMPLE']=='undefined'){
+						//	this.body[i-i0]['SAMPLE']=[];	
+						//};
+						 //this.body[i-i0]['SAMPLE'].push(myObject);
+								
+								
+								
+								
+								
 						};
 						
-						if (typeof (vcf.body[i-i0]['SAMPLE']=='undefined')){
-							vcf.body[i-i0]['SAMPLE']=[];	
-						};
+						//if (typeof (vcf.body[i-i0]['SAMPLE']=='undefined')){
+						//	vcf.body[i-i0]['SAMPLE']=[];	
+						//};
+					//this.body[i-i0]['SAMPLE'].push(myObject);
 					};
 					
-					vcf.body[i-i0]['SAMPLE'].push(myObject);
-						
-				}	
+					this.body[i-i0]['SAMPLE'].push(myObject);
+				}
+				//this.body[i-i0]['SAMPLE'].push(myObject);
 		}
 	}
 			//Work with these lines to insert on mongoDB collection
@@ -209,6 +225,13 @@ vcf.parse=function(x){
 
 	}
 	vcf.fields=F;
+	
+	//workaround to parse CSQ data 
+for (var x = 0; x < this.length; x++) {
+	for(var y = 0; y< this.body[x].length["CSQ"]; y++){
+		this.body[x]["CSQ"][y]=this.body[x]["CSQ"][y].split("|")
+	}
+}
 
 
 	vcf.parseHead(vcf); // parse head further
@@ -229,12 +252,7 @@ vcf.parse=function(x){
 			};
 		};
     };
-//workaround to parse CSQ data 
-for (var x; x < this.length; x++) {
-	for(var y; y< this.body[x].length["CSQ"]; y++){
-		this.body[x]["CSQ"][y]=this.body[x]["CSQ"][y].split("|")
-	}
-}	
+	
 return vcf;
 };
 //VCFparseHead
