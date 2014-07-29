@@ -1,18 +1,4 @@
 var main = function(){
-
-	var vcf2rdf =  function(x) {
-        //var paramethers = Object.getOwnPropertyNames(x);
-        id = x._id;
-        delete x._id;
-        rdf = [];
-        console.log (id);
-            for (var y in x){
-                z="vcf:"+ id +" prop:"+ y +" vcf:"+ x[y]
-                console.log(z)
-                rdf.push(z)
-        }
-            return rdf;
-    }
     
 	console.log("loaded main.js");
 	document.getElementById('diegoDiv').textContent="Diego's VCF sandbox";
