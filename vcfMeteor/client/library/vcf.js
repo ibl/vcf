@@ -1,4 +1,4 @@
-console.log("loaded vcfDiego.js");
+console.log("loaded vcf.js");
 
 var vcf = {};
 
@@ -80,6 +80,7 @@ return  variantsFound;
 //VCFparse
 
 vcf.parse=function(x){
+	vcf._id = Math.uuid(); //ad a UUID to vcf.
 	console.log('(parsing a '+x.length+' long string)');
 	x=x.split(/\n/);// transforms into a array finding new line caracter
 	var n=x.length; // number of lines in the file
@@ -116,112 +117,17 @@ vcf.parse=function(x){
 	for(var i=i0;i<n;i++){ //go from the first line of data on body to the end of vcf
 		L = x[i].split(/\t/);
 		vcf.body[i-i0]={};
-		vcf.body[i-i0]['line']=i-i0;
+		//vcf.body[i-i0]['line']=i-i0;
 		//console.log("Parse line " + (i-i0));
 		for(var j=0;j<F.length;j++){
-
-			//Parse field values
-			
-			
-			switch (F[j]){
-				// ID - semi-colon separated list
-				//
-				case 'ALT': //coma separated list
-					vcf.body[i-i0][F[j]]=L[j].split(/\,/);
-					break;
-				case 'INFO': //semi-colon separeted list of keys:(coma separated values list/ It could be one per allele)
-					var splited = L[j].split(/\;/);
-					var myObject = {};
-					for (var z = 0 ; z < splited.length; z++){
-						if (splited[z].search(/\=/)==-1){
-							myObject["flags"]=splited[z];
-							}else{
-								var splitedFurther = splited[z].split(/\=/);
-								var myParamether = splitedFurther[0];
-								var myValue = [];
-								myValue = splitedFurther[1].split(/\,/);
-								myObject[myParamether]=myValue;
-							}
-						vcf.body[i-i0][F[j]]=myObject;
-					}
-					break;
-				case 'FORMAT':
-					vcf.body[i-i0][F[j]]=L[j].split(/\:/);
-					break;
-				case 'CHROM':
-					vcf.body[i-i0][F[j]]=L[j].match(/\d{1,}|x|y/i)[0];
-					break;
-				default:
-					if (L[j].search(":")==-1) { // Search for ":" on others fields values
-						vcf.body[i-i0][F[j]]=L[j];
-					}else{
-						//If found, it suposes that is a sample filed.
-						//vcf.body[i-i0][F[j]]=L[j].split(/\:/); //erase it
-					var splited = L[j].split(/\:/); // split to correspond to FORMAT field
-					
-					//this.body[i-i0]['SAMPLE']=[];	
-					if (typeof this.body[i-i0]['SAMPLE']=='undefined'){
-							this.body[i-i0]['SAMPLE']=[];	
-						};
-					
-					var myObject = {};
-					myObject['sampleName']=F[j];
-
-					for (var z = 0 ; z < splited.length; z++){
-						var splitedFurther = splited[z].split(/\,/);// for each value found, split on ","
-						var myParamether = vcf.body[i-i0]['FORMAT'][z];// find correspondent FORMAT
-						myObject[myParamether]=splitedFurther;//join FORMAT and value
-						
-						if (myParamether==='GT'){ // go into details if FORMAT is genotype
-						
-							if (myObject['GT'][0].search(/\|/)>-1){ // [0] is needed because GT is an array
-								myObject['isPhased'] = true;
-								} else if (myObject['GT'][0].search(/\//)>-1)	{
-								myObject['isPhased'] = false;	
-								};
-							
-							// Think in an array of alleles all[]: all[0]=REF, all[1]=ALT[1-1] , all[2]=ALT[2-1] and so on.
-							var firstGtNumber = myObject['GT'][0].match(/(.+)(["\/|])(.+)/)[1];
-							var secondGtNumber = myObject['GT'][0].match(/(.+)(["\/|])(.+)/)[3];
-							
-							if (firstGtNumber == 0){
-								myObject['firstParentalAllele']=vcf.body[i-i0]['REF'];
-								}else{
-								myObject['firstParentalAllele']=vcf.body[i-i0]['ALT'][firstGtNumber];
-								};
-							
-							if (secondGtNumber == 0){
-								myObject['secondParentalAllele']=vcf.body[i-i0]['REF'];	
-								} else {
-									myObject['secondParentalAllele']=vcf.body[i-i0]['ALT'][secondGtNumber-1];
-								};
-								
-						//if (typeof vcf.body[i-i0]['SAMPLE']=='undefined'){
-						//	this.body[i-i0]['SAMPLE']=[];	
-						//};
-						 //this.body[i-i0]['SAMPLE'].push(myObject);
-								
-								
-								
-								
-								
-						};
-						
-						//if (typeof (vcf.body[i-i0]['SAMPLE']=='undefined')){
-						//	vcf.body[i-i0]['SAMPLE']=[];	
-						//};
-					//this.body[i-i0]['SAMPLE'].push(myObject);
-					};
-					
-					this.body[i-i0]['SAMPLE'].push(myObject);
-				}
-				//this.body[i-i0]['SAMPLE'].push(myObject);
-		}
+			vcf.body[i-i0][F[j]]=L[j];
 	}
 			//Work with these lines to insert on mongoDB collection
 			//var xx = {};
 			//xx=y.body[i-i0];
 			//Body.insert(xx);
+
+
 
 	}
 	vcf.fields=F;
@@ -315,6 +221,200 @@ vcf.parseHead = function(dt){ // go through a data file and parses data.head
 
 };
 
+			//Parse field values
+ vcf.getBodyDetails = function () {
+	//var y = this.fields
+
+	var rows = [];
+
+	for (var x in this.body){
+		for	(var y in this.body[x]){
+			switch (y){
+				// ID - semi-colon separated list
+				//
+				case 'ALT': //coma separated list
+					rows.push(this.body[x][y].split(/\,/));
+					break;
+				case 'INFO': //semi-colon separeted list of keys:(coma separated values list/ It could be one per allele)
+					var splited = this.body[x][y].split(/\;/);
+					var myObject = {};
+					for (var z = 0 ; z < splited.length; z++){
+						if (splited[z].search(/\=/)==-1){
+							myObject["flags"]=splited[z];
+							}else{
+								var splitedFurther = splited[z].split(/\=/);
+								var myParamether = splitedFurther[0];
+								var myValue = [];
+								myValue = splitedFurther[1].split(/\,/);
+								myObject[myParamether]=myValue;
+							}
+						rows.push(myObject);
+					}
+					break;
+				case 'FORMAT':
+					rows.push(this.body[x][y].split(/\:/));
+					break;
+				case 'CHROM':
+					rows.push(this.body[x][y].match(/\d{1,}|x|y/i)[0]);
+					break;
+				default:
+					if (this.body[x][y].search(":")==-1) { // Search for ":" on others fields values
+						rows.push(this.body[x][y]);
+					}else{
+						//If found, it suposes that is a sample filed.
+						//vcf.body[x][y]=body[x][y].split(/\:/); //erase it
+					var splited = this.body[x][y].split(/\:/); // split to correspond to FORMAT field
+					
+					//this.body[x]['SAMPLE']=[];	
+					//if (typeof this.body[x]['SAMPLE']=='undefined'){
+					//		this.body[x]['SAMPLE']=[];	
+					//	};
+					
+					var myObject = {};
+					myObject['sampleName']=y;
+
+					for (var z = 0 ; z < splited.length; z++){
+						var splitedFurther = splited[z].split(/\,/);// for each value found, split on ","
+						var myParamether = this.body[x]['FORMAT'][z];// find correspondent FORMAT
+						myObject[myParamether]=splitedFurther;//join FORMAT and value
+						
+						if (myParamether==='GT'){ // go into details if FORMAT is genotype
+						
+							if (myObject['GT'][0].search(/\|/)>-1){ // [0] is needed because GT is an array
+								myObject['isPhased'] = true;
+								} else if (myObject['GT'][0].search(/\//)>-1)	{
+								myObject['isPhased'] = false;	
+								};
+							
+							// Think in an array of alleles all[]: all[0]=REF, all[1]=ALT[1-1] , all[2]=ALT[2-1] and so on.
+							var firstGtNumber = myObject['GT'][0].match(/(.+)(["\/|])(.+)/)[1];
+							var secondGtNumber = myObject['GT'][0].match(/(.+)(["\/|])(.+)/)[3];
+							
+							if (firstGtNumber == 0){
+								myObject['firstParentalAllele']=this.body[x]['REF'];
+								}else{
+								myObject['firstParentalAllele']=this.body[x]['ALT'][firstGtNumber];
+								};
+							
+							if (secondGtNumber == 0){
+								myObject['secondParentalAllele']=this.body[x]['REF'];	
+								} else {
+									myObject['secondParentalAllele']=this.body[x]['ALT'][secondGtNumber-1];
+								};
+								
+						//if (typeof vcf.body[x]['SAMPLE']=='undefined'){
+						//	this.body[x]['SAMPLE']=[];	
+						//};
+						 //this.body[x]['SAMPLE'].push(myObject);
+								
+								
+								
+								
+								
+						};
+						
+						//if (typeof (vcf.body[x]['SAMPLE']=='undefined')){
+						//	vcf.body[x]['SAMPLE']=[];	
+						//};
+					//this.body[x]['SAMPLE'].push(myObject);
+					};
+					
+					sampleNodes.push(myObject);
+				}
+				//this.body[x]['SAMPLE'].push(myObject);
+			}
+		}
+	}
+
+	return rows;
+}
+
+vcf.getBodySamples = function () {
+	//var y = this.fields
+	var sampleNodes = [];
+
+
+	for (var x in this.body){
+		for	(var y in this.body[x]){
+			if (y!= 'ALT' & y!='INFO' & y!='FORMAT' & y!='CHROM'){
+					if (this.body[x][y].search(":")==-1) { // Search for ":" on others fields values
+						//rows.push(this.body[x][y]);
+					}else{
+						//If found, it suposes that is a sample filed.
+						//vcf.body[x][y]=body[x][y].split(/\:/); //erase it
+					var splited = this.body[x][y].split(/\:/); // split to correspond to FORMAT field
+					
+					//this.body[x]['SAMPLE']=[];	
+					//if (typeof this.body[x]['SAMPLE']=='undefined'){
+					//		this.body[x]['SAMPLE']=[];	
+					//	};
+					
+					var myObject = {};
+					myObject['_id'] = Math.uuid(); //Look later if _id must be set by mongoDB
+					myObject['fileId'] = vcf._id;
+					myObject['sampleName']=y;
+					myObject['row']=x; // starts from 1
+
+					for (var z = 0 ; z < splited.length; z++){
+						var splitedFurther = splited[z].split(/\,/);// for each value found, split on ","
+						var myParamether = this.body[x]['FORMAT'].split(/\:/)[z];// find correspondent FORMAT
+						myObject[myParamether]=splitedFurther;//join FORMAT and value
+						
+						if (myParamether==='GT'){ // go into details if FORMAT is genotype
+						
+							if (myObject['GT']=="./."){
+								myObject['hasVariant']=false;
+							} else {
+								myObject['hasVariant']=true
+							}
+							if (myObject['GT'][0].search(/\|/)>-1){ // [0] is needed because GT is an array
+								myObject['isPhased'] = true;
+								} else if (myObject['GT'][0].search(/\//)>-1)	{
+								myObject['isPhased'] = false;	
+								};
+							
+							// Think in an array of alleles all[]: all[0]=REF, all[1]=ALT[1-1] , all[2]=ALT[2-1] and so on.
+							var firstGtNumber = myObject['GT'][0].match(/(.+)(["\/|])(.+)/)[1];
+							var secondGtNumber = myObject['GT'][0].match(/(.+)(["\/|])(.+)/)[3];
+							
+							if (firstGtNumber == 0){
+								myObject['firstParentalAllele']=this.body[x]['REF'];
+								}else{
+								myObject['firstParentalAllele']=this.body[x]['ALT'][firstGtNumber];
+								};
+							
+							if (secondGtNumber == 0){
+								myObject['secondParentalAllele']=this.body[x]['REF'];	
+								} else {
+									myObject['secondParentalAllele']=this.body[x]['ALT'][secondGtNumber-1];
+								};
+								
+						//if (typeof vcf.body[x]['SAMPLE']=='undefined'){
+						//	this.body[x]['SAMPLE']=[];	
+						//};
+						 //this.body[x]['SAMPLE'].push(myObject);
+								
+								
+								
+								
+								
+						};
+						
+						//if (typeof (vcf.body[x]['SAMPLE']=='undefined')){
+						//	vcf.body[x]['SAMPLE']=[];	
+						//};
+					//this.body[x]['SAMPLE'].push(myObject);
+					};
+					
+					sampleNodes.push(myObject);
+				}
+				//this.body[x]['SAMPLE'].push(myObject);
+			}
+		}
+	}
+	return sampleNodes;
+	//return rows;
+}
 
 var getGeneList = function(){
 

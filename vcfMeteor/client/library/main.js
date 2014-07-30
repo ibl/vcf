@@ -228,6 +228,6 @@ var fileSelected = function (event) {
 	    //add file name, file size, and ID to vcf
 		vcf.fileName = input.files[0].name
 		vcf.fileSize = input.files[0].size
-		vcf.id = Math.uuid()
+		vcf._id = Math.uuid()
 };
 
