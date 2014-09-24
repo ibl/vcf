@@ -1,0 +1,11 @@
+<template name="body">
+
+  <span>CHROM | </span><span>POS | </span><span>ID | </span><span>REF | </span>
+        <span>ALT | </span><span>QUAL | </span><span>FILTER | </span><span>INFO | </span><span>FORMAT</span>
+  <div class="bodyTitle">
+  
+    {{#each bodyTitle}}
+      {{> bodyTitleContent}}
+    {{/each}}
+  </div>
+</template>

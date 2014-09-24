@@ -1,0 +1,35 @@
+.chart rect {
+  fill: steelblue;
+}
+
+.chart text {
+  fill: black;
+  font: 10px sans-serif;
+  text-anchor: end;
+}
+
+.chart {
+/*  float: left;*/
+}
+
+div#myTable_wrapper {
+/*    float: left; */
+/*    width: 500; */
+}
+
+div#rdf {
+/*    float : right; */
+}
+
+.container {
+/*  display: block; */
+  border-style: none none none solid;
+  border-color: green;
+  font-size: 12
+/*  float: left */
+}
+
+
+.button {
+/*  float : left ; */
+}
