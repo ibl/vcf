@@ -287,14 +287,14 @@ VCF.modules=[
 
 {
 	name:'List variant calls (could take a while)',
-	url:'listAll.js',
+	url:'https://ibl.github.io/vcf/listAll.js',
 	//url:'https://www.googledrive.com/host/0BwwZEXS3GesiTjlHSmlOcEJaeDA/vcf/listAll.js'
 	//fun:function(x){console.log(x)}
 },
 
 {
 	name:'Plot all variant calls',
-	url:'plotAll.js',
+	url:'https://ibl.github.io/vcf/plotAll.js',
 	//url:'https://www.googledrive.com/host/0BwwZEXS3GesiTjlHSmlOcEJaeDA/vcf/plotAll.js'
 	//fun:function(x){console.log(x)}
 },
