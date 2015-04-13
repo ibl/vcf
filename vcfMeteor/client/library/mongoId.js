@@ -1,9 +1,28 @@
     console.log('loaded mongoID.js');
+
+    var lala = function (j){
+        j._id = vcf._id
+        
+        //    delete j._id;
+        //j = j.head;
+
+        if  (j === 'undefined'){
+            console.log ('undefined triggered')
+            return  -1;
+        }
+
+        oneLevelParser(j, "vcf",  "prop:", "")
+        
+        for (var x in j){
+        lala(j[x])
+        }
+    };
     
     var inDepthParser = function  (j, subPrefix, prePrefix, objPrefix) {
-    //    id = j._id;
-        id = subPrefix+id;
+        var id = j._id;
+        id = subPrefix+":UUID-"+id;
     //    delete j._id;
+    j = j.head;
 
         if (r){}
             else{var r = []};
@@ -42,7 +61,7 @@
                  
 
                 //not ready yet
-                    innerParser(j[x], subPrefix, prePrefix, objPrefix);
+                    inDepthParser(j[x], subPrefix, prePrefix, objPrefix);
                     
                 
             };
@@ -60,12 +79,20 @@
         return reponse;
     };
 
-    var oneLevelParser = function  (j, subPrefix, prePrefix) {
-            id = j._id; // j is suposed to have _id  propertie
+    var oneLevelParser = function  (j, subPrefix, prePrefix, uuidPreText) {
+        // j is suposed to have _id  propertie.
+        // added "UUID-" at beggining because the first caracter can't be a number
+            var id = ""
+            if (uuidPreText){
+             id = uuidPreText+j['_id']; 
+            } else  {
+              id = j['_id']; 
+            }
+
         //id = subPrefix+id;
-        delete j._id;
+        delete j['_id'];
         
-        var totriple = function (mySubject, myPredicate){
+        var totriple = function (mySubject, myPredicate, myObject){
             //return {'subject':subject, 
             //        'predicate':predicate,
             //        'object':object
@@ -129,5 +156,10 @@
             };
         
         };
-        return r;
+        var rdfString = "";
+
+        for (var x in r){
+            rdfString=rdfString+r[x]+"\n"
+        }
+        return rdfString;
     };
