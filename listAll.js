@@ -71,6 +71,10 @@ VCFmodule=function(div){
                 that = this
                 var i=this.i
                 console.log('i',i)
+                var thr = listVariantCalls.childNodes[1].childNodes[0]
+                for(var j=i+1;j<thr.children.length;j++){
+                    thr.children[j].children[0].i=thr.children[j].children[0].i-1
+                }
                 // remove header
                 var thr = listVariantCalls.childNodes[1].childNodes[0]
                 thr.removeChild(thr.children[i])
