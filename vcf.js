@@ -22,6 +22,7 @@ this.buildUI=function(id){
 	this.div=div; // register the div to the instance it is the UI of
 	var dt = this.data; // that's where the fun is :-)
 	this.div.dt=dt;
+	//if(typeof(this.i)=="undefined"){this.i=0}
 	this.div.i=this.i; // // the ith vcf
 	// show head and body
 	var divHead = document.createElement('div');divHead.id="divHead";
@@ -68,6 +69,10 @@ this.buildUI=function(id){
 	sel.onchange=function(){
 		var i = parseInt(this.value);
 		var j = this.parentElement.parentElement.parentElement.i;
+		//if(typeof(j)=="undefined"){
+		//	this.parentElement.parentElement.parentElement.i=0
+		//	j=0
+		//}
 		if(true){ // uncomment when debugging modules
 		//if(!VCF.modules[i].fun){ // comment when debugging modules
 			var s = document.createElement('script');
@@ -90,7 +95,17 @@ this.buildUI=function(id){
 	// Body Body (analysis results)
 	var divBodyBody = document.createElement('div');divBodyBody.id="divBodyBody";
 	divBody.appendChild(divBodyBody);
+	// if the URL opt = ..., go ahead and do so
 	
+	if(VCF.urlParms.opt){
+		Object.getOwnPropertyNames(sel.options).forEach(function(ith){
+			var opt = sel.options[ith]
+			if(opt.textContent==VCF.urlParms.opt){
+				opt.selected=true
+			}
+		})
+		sel.onchange()
+	}
 }
 
 if(!id){id=VCF.uid('vcf')};
@@ -124,8 +139,18 @@ VCF.startUI=function(id){  // prepare div for a vcf instance
 	VCF.div.appendChild(div);
 };
 
+VCF.getUrlParms=function(){
+	if(location.hash.length>0){
+		this.urlParms={}
+		location.hash.slice(1).split('&').forEach(function(p){
+			p = p.split('=')
+			VCF.urlParms[p[0]]=p.slice(1).join('=')
+		})
+	}
+}
+
 VCF.buildUI=function(id){ // main UI
-	
+	this.getUrlParms()
 	id = id || VCF.uid('VCF');
 	var div = document.getElementById(id)
 	if(!div){
@@ -199,7 +224,19 @@ VCF.buildUI=function(id){ // main UI
 	//document.body.appendChild(sp);
 	setTimeout(function(){document.head.appendChild(sp)},1000);
 	VCF.div=div; // registering the div element so vcf instances can find it
-	
+	// in case VCF file included in the URL has, get it
+	if(VCF.urlParms.vcf){
+		// if from DropBox, redirect link to CORS served content
+		var urlVCF=VCF.urlParms.vcf.replace('www.dropbox.com','dl.dropboxusercontent.com').replace('dl=0','dl=1')
+		$.get(urlVCF).then(function(txt){
+			console.log('parsing VCF from '+urlVCF)
+			//VCF.dir.vcfs[this.i]=new VCF(txt,VCF.dir.ids[this.i],this.i);
+			VCF.dir.vcfs[this.i]=new VCF(txt,urlVCF,this.i);
+			//new VCF(txt)
+
+		})
+		4
+	}
 }
 
 VCF.parse=function(x){
@@ -286,14 +323,15 @@ VCF.modules=[
 },
 
 {
-	name:'List variant calls (could take a while)',
-	url:'https://ibl.github.io/vcf/listAll.js',
+	name:'List variant calls',
+	//url:'https://ibl.github.io/vcf/listAll.js',
+	url:'listAll.js',
 	//url:'https://www.googledrive.com/host/0BwwZEXS3GesiTjlHSmlOcEJaeDA/vcf/listAll.js'
 	//fun:function(x){console.log(x)}
 },
 
 {
-	name:'Plot all variant calls',
+	name:'Plot variant calls',
 	url:'https://ibl.github.io/vcf/plotAll.js',
 	//url:'https://www.googledrive.com/host/0BwwZEXS3GesiTjlHSmlOcEJaeDA/vcf/plotAll.js'
 	//fun:function(x){console.log(x)}

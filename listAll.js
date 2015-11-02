@@ -52,15 +52,34 @@ VCFmodule=function(div){
         se.onchange = function(evt){
             var F = this.value; // field
             var V = this.dt[F]; // values
-            trs = this.parentElement.parentElement.parentElement.parentElement.tBodies[0].childNodes;
-            var td;
+            var trs = this.parentElement.parentElement.parentElement.parentElement.tBodies[0].childNodes;
             for(var i=0;i<V.length;i++){
                 td = document.createElement('td');td.textContent=V[i];trs[i].appendChild(td);
             }
             this.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.fieldSelector();
             this.parentElement.innerHTML=F;
-            //console.log(this);
-            //lala = this;
+            // add delete column option
+            var thr = listVariantCalls.childNodes[1].childNodes[0]
+            var n = thr.children.length
+            var th = thr.children[n-2]
+            var sp = document.createElement('span')
+            sp.i=n-2
+            sp.style.color='red'
+            sp.textContent=' X'
+            th.appendChild(sp)
+            sp.onclick=function(evt){ // remove column
+                that = this
+                var i=this.i
+                console.log('i',i)
+                // remove header
+                var thr = listVariantCalls.childNodes[1].childNodes[0]
+                thr.removeChild(thr.children[i])
+                // remove cells
+                Object.getOwnPropertyNames(listVariantCalls.children[0].children).forEach(function(c,j){
+                    var tr = listVariantCalls.children[0].children[j]
+                    tr.removeChild(tr.children[i])
+                })
+            }
         }
                 
         4
