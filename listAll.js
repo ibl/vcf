@@ -5,6 +5,7 @@ console.log('loaded listAll.js')
 
 
 VCFmodule=function(div){
+    //lala = div
     console.log('listAll',div);
     var divBB = jQuery('#divBodyBody',div)[0];   
     divBB.textContent='... listing everything ... :-) :-)';
@@ -26,7 +27,7 @@ VCFmodule=function(div){
             td3.innerHTML='<a href="https://www.ncbi.nlm.nih.gov/projects/SNP/snp_ref.cgi?rs='+div.dt.body.ID[i]+'" target="_blank">'+div.dt.body.ID[i]+'</a>';
         } else{
             td3.textContent=div.dt.body.ID[i];textContent=div.dt.body.ID[i];
-        }  
+        }
     }
     // table head
     var tbh = document.createElement('thead');tb.appendChild(tbh);
@@ -38,6 +39,8 @@ VCFmodule=function(div){
     var th3 = document.createElement('th');tr.appendChild(th3);
     th3.textContent='ID';
     // add field selector to header
+    var run=function(){
+    console.log(div.dt.fields)
     div.fieldSelector=function(){
         var i = this.i;
         var F = Object.getOwnPropertyNames(this.dt.body); // fields
@@ -86,7 +89,92 @@ VCFmodule=function(div){
             }
         }
                 
-        4
+        
     }
-    div.fieldSelector();
+    div.fieldSelector()
+    }
+    if(VCF.urlParms.features){
+        $.get(VCF.urlParms.features).then(function(txt){
+            if(!VCF.dir.features){
+                VCF.dir.features={}
+            }
+            //VCF.dir.features[VCF.urlParms.features]={}
+
+            L = txt.split('\n')
+            Ft={
+                head:L[0],
+                posStart:[],
+                posEnd:[],
+                txt:[]
+            }
+            n=L.length, j=-1, val=[], Li='' // i lines, j features
+            ///*
+            //div.dt.body.features=div.dt.body.ID.map(function(x,i){
+            //    return '+'
+            //})
+            for(var i=1 ; i<n ; i++){
+                Li=L[i]
+                if(Li[0]!=='\t'){ // it's a feature position'
+                    j++
+                    val=Li.split(/\t/)
+                    Ft.posStart[j]=parseInt(val[0])
+                    Ft.posEnd[j]=parseInt(val[1])
+                    Ft.txt[j]=val[2]
+                    
+                }else{
+                    //console.log(Li)
+                    Ft.txt[j]=Ft.txt[j]+'; '+Li
+                }
+            }
+            VCF.dir.features=Ft
+            //*/
+            // add new features
+            //div.dt.fields.push('features')
+
+            run();
+            var trs = listVariantCalls.children[0]
+            var n = trs.childElementCount
+            var spFun=function(evt){
+                //console.log(this)
+                //var i = this.i
+                //lala=this
+                if(this.textContent.slice(1)=='+'){
+                    this.textContent=' -'
+                    var pre = document.createElement('pre')
+                    pre.style.fontSize=9
+                    // extract annotation from features
+                    //pre.innerHTML=new Date()
+                    var h = VCF.dir.features.head
+                    var pos=parseInt(this.parentElement.parentElement.children[1].textContent)
+                    VCF.dir.features.posStart.forEach(function(p,i){
+                        if(VCF.dir.features.posStart[i]>=pos){
+                            if(VCF.dir.features.posEnd[i]<=pos){
+                                h+='<br>'+VCF.dir.features.posStart[i]+'-'+VCF.dir.features.posEnd[i]
+                                h+=' '+VCF.dir.features.txt[i].replace(/;/g,'<br>')
+                            }
+                        }
+                    })
+                    pre.innerHTML=h
+                    this.parentNode.appendChild(pre)
+                }else{
+                    this.parentElement.removeChild(this.parentElement.children[1])
+                    this.textContent=' +'
+                }
+                
+
+            }
+            for(var i=0 ; i<n ; i++){
+                var sp = document.createElement('sp')
+                sp.i=i
+                sp.textContent=' +'
+                sp.style.color='blue'
+                sp.onclick=spFun
+                trs.children[i].children[2].appendChild(sp)
+            }
+        })
+        
+    }else{
+        run();
+    }
+    
 }
