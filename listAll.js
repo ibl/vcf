@@ -144,8 +144,8 @@ VCFmodule=function(div){
                     pre.style.fontSize=9
                     // extract annotation from features
                     //pre.innerHTML=new Date()
-                    var h = VCF.dir.features.head
                     var pos=parseInt(this.parentElement.parentElement.children[1].textContent)
+                    var h = VCF.dir.features.head.slice(0,9)+'<a href="http://www.ncbi.nlm.nih.gov/nuccore/87125858?report=graph&mk='+pos+'|'+pos+'&v='+Math.max(0,pos-10000)+':'+(pos+10000)+'" target="_blank">'+VCF.dir.features.head.slice(9)+pos+'</a>'
                     VCF.dir.features.posStart.forEach(function(p,i){
                         if(VCF.dir.features.posStart[i]>=pos){
                             if(VCF.dir.features.posEnd[i]<=pos){
