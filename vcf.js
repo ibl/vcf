@@ -225,17 +225,19 @@ VCF.buildUI=function(id){ // main UI
 	setTimeout(function(){document.head.appendChild(sp)},1000);
 	VCF.div=div; // registering the div element so vcf instances can find it
 	// in case VCF file included in the URL has, get it
-	if(VCF.urlParms.vcf){
-		// if from DropBox, redirect link to CORS served content
-		var urlVCF=VCF.urlParms.vcf.replace('www.dropbox.com','dl.dropboxusercontent.com').replace('dl=0','dl=1')
-		$.get(urlVCF).then(function(txt){
-			console.log('parsing VCF from '+urlVCF)
-			//VCF.dir.vcfs[this.i]=new VCF(txt,VCF.dir.ids[this.i],this.i);
-			VCF.dir.vcfs[this.i]=new VCF(txt,urlVCF,this.i);
-			//new VCF(txt)
+	if(VCF.urlParms){
+		if(VCF.urlParms.vcf){
+			// if from DropBox, redirect link to CORS served content
+			var urlVCF=VCF.urlParms.vcf.replace('www.dropbox.com','dl.dropboxusercontent.com').replace('dl=0','dl=1')
+			$.get(urlVCF).then(function(txt){
+				console.log('parsing VCF from '+urlVCF)
+				//VCF.dir.vcfs[this.i]=new VCF(txt,VCF.dir.ids[this.i],this.i);
+				VCF.dir.vcfs[this.i]=new VCF(txt,urlVCF,this.i);
+				//new VCF(txt)
 
-		})
-		4
+			})
+			4
+		}
 	}
 }
 
