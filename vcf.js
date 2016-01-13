@@ -96,15 +96,16 @@ this.buildUI=function(id){
 	var divBodyBody = document.createElement('div');divBodyBody.id="divBodyBody";
 	divBody.appendChild(divBodyBody);
 	// if the URL opt = ..., go ahead and do so
-	
-	if(VCF.urlParms.opt){
-		Object.getOwnPropertyNames(sel.options).forEach(function(ith){
-			var opt = sel.options[ith]
-			if(opt.textContent==VCF.urlParms.opt){
-				opt.selected=true
-			}
-		})
-		sel.onchange()
+	if(VCF.urlParms){
+		if(VCF.urlParms.opt){
+			Object.getOwnPropertyNames(sel.options).forEach(function(ith){
+				var opt = sel.options[ith]
+				if(opt.textContent==VCF.urlParms.opt){
+					opt.selected=true
+				}
+			})
+			sel.onchange()
+		}
 	}
 }
 
@@ -179,6 +180,7 @@ VCF.buildUI=function(id){ // main UI
     	    	VCF.dir.vcfs[this.i]=new VCF(txt,VCF.dir.ids[this.i],this.i);
 				//VCF.dir.vcfs[this.i].fileName=VCF.dir.ids[this.i];
 				console.log('... done parsing '+fname);
+				
 	    	}
 			
 	    reader["readAsText"](evt.target.files[i]);			
@@ -208,6 +210,21 @@ VCF.buildUI=function(id){ // main UI
 				VCF.dir.vcfs[this.success.i]=new VCF(txt,VCF.dir.ids[this.success.i],thisi);
 				//VCF.dir.vcfs[this.success.i].fileName=VCF.dir.ids[this.success.i];
 				console.log('... done parsing '+fname);
+				// if all is parsed and then is there, let's do it
+				if((location.search.length>1)&&(VCF.dir.vcfs.length==evt.files.length)){
+					var parms = {}
+					location.search.slice(1).split('&').forEach(function(pp){
+						pp = pp.split('=')
+						parms[pp[0]]=pp[1]
+						//console.log(pp)
+					})
+					if(parms.then){
+						var s=document.createElement('script')
+						s.src=parms.then
+						document.head.appendChild(s)
+						4
+					}
+				}
 			};
 			reader.i=i0+i;
 			jQuery.get(evt.files[i].link,reader)
