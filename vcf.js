@@ -211,23 +211,23 @@ VCF.buildUI=function(id){ // main UI
 				//VCF.dir.vcfs[this.success.i].fileName=VCF.dir.ids[this.success.i];
 				console.log('... done parsing '+fname);
 				// if all is parsed and then is there, let's do it
-				if((location.search.length>1)&&(VCF.dir.vcfs.length==evt.files.length)){
-					var parms = {}
-					location.search.slice(1).split('&').forEach(function(pp){
-						pp = pp.split('=')
-						parms[pp[0]]=pp[1]
-						//console.log(pp)
-					})
-					if(parms.then){
-						var s=document.createElement('script')
-						s.src=parms.then
-						document.head.appendChild(s)
-						4
-					}
-				}
 			};
 			reader.i=i0+i;
 			jQuery.get(evt.files[i].link,reader)
+		}
+		// look for something to do next
+		var parms = {}
+		location.search.slice(1).split('&').forEach(function(pp){
+			pp = pp.split('=')
+			parms[pp[0]]=pp[1]
+			//console.log(pp)
+		})
+		if(parms.then){
+			var s=document.createElement('script')
+			s.src=parms.then
+			setTimeout(function(){
+				document.head.appendChild(s)
+			},1000)
 		}
 		
 	})
