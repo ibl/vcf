@@ -317,6 +317,20 @@ VCF.readFiles=function(files){
 		}
 		fun[i](files[i].link,fname,i,j)		
 	}
+	// look for something to do next
+		var parms = {}
+		location.search.slice(1).split('&').forEach(function(pp){
+			pp = pp.split('=')
+			parms[pp[0]]=pp[1]
+			//console.log(pp)
+		})
+		if(parms.then){
+			var s=document.createElement('script')
+			s.src=parms.then
+			setTimeout(function(){
+				document.head.appendChild(s)
+			},3000)
+		}
 
 }
 
