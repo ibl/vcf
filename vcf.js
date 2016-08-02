@@ -243,7 +243,7 @@ VCF.buildUI=function(id){ // main UI
 	sp.src='https://www.dropbox.com/static/api/2/dropins.js';
 	sp.id='dropboxjs';
 	//sp.setAttribute('data-app-key','8whwijxgl8iic3j');
-	sp.setAttribute('data-app-key','cdaodnrawv91mre');
+	sp.setAttribute('data-app-key','hg9y8nou75s22cx');
 	sp.onload=function(){
 		options = {
 			// Required. Called when a user selects an item in the Chooser.
