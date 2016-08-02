@@ -46,10 +46,10 @@ this.buildUI=function(id){
 			divHeadBody.textContent=JSON.stringify(this.dt,undefined,1);
 			//lala = divHeadBody;
 		}
-	}	
+	}
 	var divBody = document.createElement('div');divBody.id="divBody";
 	div.appendChild(divBody);
-	
+
 	var divBodyHead = document.createElement('div');divBodyHead.id="divBodyHead";
 	divBody.appendChild(divBodyHead);
 	var sel = document.createElement('select');divBodyHead.appendChild(sel);
@@ -83,7 +83,7 @@ this.buildUI=function(id){
 				VCF.modules[this.i].fun=jmat.clone2(VCFmodule);
 				VCF.modules[this.i].fun(VCF.dir.vcfs[this.j].div);
 			}
-			document.body.appendChild(s);	
+			document.body.appendChild(s);
 		} else{
 			VCF.modules[i].fun(VCF.dir.vcfs[j].div);
 		}
@@ -120,7 +120,7 @@ if(!!txt){
 } else {
 	this.data=undefined;
 }
-	 
+
 }
 
 //////// methods of the VCF class //////////
@@ -156,7 +156,7 @@ VCF.buildUI=function(id){ // main UI
 	var div = document.getElementById(id)
 	if(!div){
 		div = document.createElement('div');div.id=id;
-		document.body.appendChild(div);	
+		document.body.appendChild(div);
 	}
 	div.innerHTML='[<a href="https://github.com/ibl/vcf" target="_blank">source code</a>] Load VCF file:';
 	console.log('UI build')
@@ -180,16 +180,19 @@ VCF.buildUI=function(id){ // main UI
     	    	VCF.dir.vcfs[this.i]=new VCF(txt,VCF.dir.ids[this.i],this.i);
 				//VCF.dir.vcfs[this.i].fileName=VCF.dir.ids[this.i];
 				console.log('... done parsing '+fname);
-				
+
 	    	}
-			
-	    reader["readAsText"](evt.target.files[i]);			
+
+	    reader["readAsText"](evt.target.files[i]);
 		}
-		
+
 		//reader["readAsBinaryString"](f);
 	}
 	div.appendChild(ipf);
+	// DropBox button
+	
 	// Read dropbox files
+	/*
 	var drpBox = document.createElement('input');
 	drpBox.type="dropbox-chooser";
 	drpBox.setAttribute('name','selected-file');
@@ -229,15 +232,51 @@ VCF.buildUI=function(id){ // main UI
 				document.head.appendChild(s)
 			},1000)
 		}
-		
 	})
+
+	
 	//drpBox.setAttribute('data-extensions','.ab1 .fsa');
 	div.appendChild(drpBox);
+	*/
 	var sp = document.createElement('script');
 	sp.type='text/javascript';
-	sp.src='https://www.dropbox.com/static/api/1/dropins.js';
+	sp.src='https://www.dropbox.com/static/api/2/dropins.js';
 	sp.id='dropboxjs';
-	sp.setAttribute('data-app-key','8whwijxgl8iic3j');
+	//sp.setAttribute('data-app-key','8whwijxgl8iic3j');
+	sp.setAttribute('data-app-key','cdaodnrawv91mre');
+	sp.onload=function(){
+		options = {
+			// Required. Called when a user selects an item in the Chooser.
+			success: function(files) {
+				//console.log(files)
+				//alert("lala Here's the file link: " + files[0].link)
+				VCF.readFiles(files)
+			},
+
+			// Optional. Called when the user closes the dialog without selecting a file
+			// and does not include any parameters.
+			cancel: function() {
+
+			},
+
+			// Optional. "preview" (default) is a preview link to the document for sharing,
+			// "direct" is an expiring link to download the contents of the file. For more
+			// information about link types, see Link types below.
+			linkType: "direct",
+
+			// Optional. A value of false (default) limits selection to a single file, while
+			// true enables multiple file selection.
+			multiselect: true,
+
+			// Optional. This is a list of file extensions. If specified, the user will
+			// only be able to select files with these extensions. You may also specify
+			// file types, such as "video" or "images" in the list. For more information,
+			// see File types below. By default, all extensions are allowed.
+			extensions: ['.vcf'],
+		};
+		var button = Dropbox.createChooseButton(options);
+		document.getElementById("vcfUi").appendChild(button);
+	}
 	//document.body.appendChild(sp);
 	setTimeout(function(){document.head.appendChild(sp)},1000);
 	VCF.div=div; // registering the div element so vcf instances can find it
@@ -258,6 +297,29 @@ VCF.buildUI=function(id){ // main UI
 	}
 }
 
+VCF.readFiles=function(files){
+	//var i0=VCF.dir.ids.length; // number of vcfs registered already
+	console.log(files)
+	var n = files.length
+	var fun=[]
+	for(var i=0;i<n;i++){
+		var j=VCF.dir.ids.length
+		var fname = files[i].name;
+		VCF.dir.ids[j]=fname;
+		VCF.startUI(fname); // a div for this vcf file
+		console.log('started parsing '+fname+' ...');
+		fun[i]=function(url,fname,i,j){
+			$.get(files[i].link)
+		 	.then(function(txt){
+		 		VCF.dir.vcfs[j]=new VCF(txt,VCF.dir.ids[j],j);
+				console.log('... done parsing '+i+'/'+n+': '+fname);
+			})			
+		}
+		fun[i](files[i].link,fname,i,j)		
+	}
+
+}
+
 VCF.parse=function(x){
 	console.log('(parsing a '+x.length+' long string)');
 	x=x.split(/\n/);
@@ -270,14 +332,14 @@ VCF.parse=function(x){
 	if(L==null){
 		throw(x[i]);
 	}
-	
+
 	while(L.length>1){
 		i++;
 		L = L[1].match(/([^=]+)\=(.*)/);
 		if(!y.head[L[1]]){y.head[L[1]]=[]}
 		y.head[L[1]].push(L[2]);
 		L = x[i].match(/^##(.*)/);
-		if(L==null){L=[]}; // break	
+		if(L==null){L=[]}; // break
 	}
 	// parse # body lines
 	L=x[i].match(/^#([^#].*)/)[1]; // use fuirst line to define fields
@@ -290,7 +352,7 @@ VCF.parse=function(x){
 		L = x[i].split(/\t/);
 		for(var j=0;j<F.length;j++){
 			y.body[F[j]][i-i0]=L[j];
-		}	
+		}
 	}
 	y.fields=F;
 	VCF.parseHead(y); // parse head further
@@ -325,7 +387,7 @@ VCF.parseHead=function(dt){ // go through a data file and parses data.head
 		}
 	};
 	// return dt <-- no need, dt was passed by reference
-	
+
 };
 
 // Modules
@@ -373,13 +435,12 @@ if(!window.d3){
 	var s = document.createElement('script');
 	s.src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.3.9/d3.min.js';
 	document.head.appendChild(s);
-	
+
 }
 
 if(!window.jmat){
 	var s = document.createElement('script');
 	s.src='https://jmat.googlecode.com/git/jmat.js';
 	document.head.appendChild(s);
-	
-}
 
+}

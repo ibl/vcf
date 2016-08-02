@@ -93,6 +93,7 @@ VCFmodule=function(div){
     }
     div.fieldSelector()
     }
+    if(VCF.urlParms){
     if(VCF.urlParms.features){
         $.get(VCF.urlParms.features).then(function(txt){
             if(!VCF.dir.features){
@@ -173,7 +174,7 @@ VCFmodule=function(div){
             }
         })
         
-    }else{
+    }}else{
         run();
     }
     
