@@ -100,7 +100,7 @@ this.buildUI=function(id){
 		if(VCF.urlParms.opt){
 			Object.getOwnPropertyNames(sel.options).forEach(function(ith){
 				var opt = sel.options[ith]
-				if(opt.textContent==VCF.urlParms.opt){
+				if(opt.textContent==decodeURIComponent(VCF.urlParms.opt)){
 					opt.selected=true
 				}
 			})
