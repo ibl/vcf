@@ -389,7 +389,13 @@ VCF.parseHead=function(dt){ // go through a data file and parses data.head
 			v={};
 			for(j=0;j<dt.head[f].length;j++){
 				str=dt.head[f][j];
-				ID=str.match(/ID=([^\,\>]+)/)[1];
+				console.log(str)
+				ID=str.match(/ID=([^\,\>]+)/);
+				if(ID){
+					ID=ID[1]
+				}else{
+					ID='NA'+j
+				}
 				v[ID]={};
 				AV = str.match(/([^\,\<]+=[^\,\>]+)/g);
 				for(k=1;k<AV.length;k++){ // k=0 is if ID's AV
