@@ -394,7 +394,7 @@ VCF.parseHead=function(dt){ // go through a data file and parses data.head
 					ID=ID[1]
 				}else{
 					ID='NA'+j
-					console.log('ID '+ID+' assigned to',str)
+					console.log('ID='+ID+' assigned to',str)
 				}
 				v[ID]={};
 				AV = str.match(/([^\,\<]+=[^\,\>]+)/g);
